@@ -1,1 +1,73 @@
-<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><title>vuethree</title><script defer="defer" src="/js/chunk-vendors.1e08fe53.js"></script><script defer="defer" src="/js/app.67aa1e78.js"></script><link href="/css/app.73c34888.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but vuethree doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>성남 AI 랩 — MetaSonGi</title>
+<meta name="description" content="성남 판교에서 만드는 AI · 디지털트윈 · 스마트공장 웹 프로젝트 갤러리" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#top" class="logo"><span class="logo-mark">◈</span> 성남 AI 랩 <span class="logo-sub">MetaSonGi</span></a>
+  <div class="nav-links">
+    <a href="#projects">프로젝트</a>
+    <a href="#about">소개</a>
+    <a href="https://github.com/MetaSonGi" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
+</nav>
+
+<header id="top" class="hero">
+  <canvas id="skyline"></canvas>
+  <div class="hero-inner">
+    <p class="kicker">SEONGNAM · PANGYO TECHNO VALLEY</p>
+    <h1>판교에서 만드는<br /><span class="grad">AI 실험실</span></h1>
+    <p class="hero-sub">스마트공장 · 디지털트윈 · AI —<br />브라우저에서 바로 실행되는 웹 프로젝트 갤러리</p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn primary">프로젝트 보기 ↓</a>
+      <a href="https://github.com/MetaSonGi" target="_blank" rel="noopener" class="btn">GitHub ↗</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="stat-num" data-count="6">0</span><span class="stat-label">웹 프로젝트</span></div>
+      <div class="stat"><span class="stat-num" data-count="7">0</span><span class="stat-label">GitHub 저장소</span></div>
+      <div class="stat"><span class="stat-num" data-count="100">0</span><span class="stat-label">% 브라우저 실행</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="projects" class="section">
+    <div class="section-head">
+      <h2>프로젝트 갤러리</h2>
+      <p>카드를 눌러 바로 실행해 보세요. 전부 설치 없이 웹에서 동작합니다.</p>
+    </div>
+    <div id="filters" class="chips"></div>
+    <div id="gallery" class="gallery"></div>
+  </section>
+
+  <section id="about" class="section about">
+    <div class="about-card">
+      <div class="about-emoji">👨‍💻</div>
+      <div>
+        <h2>손효기 <span class="muted">MetaSonGi</span></h2>
+        <p class="about-line">Smart Factory · Digital Twin · AI · Industrial Automation</p>
+        <p>스마트공장 AR/VR/MR 서비스 개발 · 로봇 디지털트윈 현장 적용 연구 ·<br />
+        제조 분야 Unity 강의 — 지금은 제조 AI로 방향을 전환하며<br />
+        성남 판교에서 웹으로 바로 써먹는 AI 도구들을 만들고 있습니다.</p>
+        <div class="about-links">
+          <a href="https://github.com/MetaSonGi" target="_blank" rel="noopener" class="btn small">GitHub ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>성남 AI 랩 · Seongnam AI Lab — Made in Pangyo, Seongnam 🇰🇷</p>
+  <p class="muted">모든 프로젝트는 브라우저에서 실행됩니다 · <a href="https://github.com/MetaSonGi">github.com/MetaSonGi</a></p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
