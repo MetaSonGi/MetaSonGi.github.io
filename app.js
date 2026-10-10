@@ -80,6 +80,27 @@
       tags: ['디지털트윈', '분석'],
       hue: ['#3a0e2a', '#5a1a40'],
     },
+    {
+      emoji: '🖼️', title: '이미지 편집 스튜디오',
+      url: 'https://metasongi.github.io/image-toolkit/',
+      desc: '비율 변환(4:3·16:9) · 픽셀 자르기 · 격자 분할 · 모양 자르기 · 배경 제거.',
+      tags: ['생산성'],
+      hue: ['#0e2a3a', '#1a4a5a'],
+    },
+    {
+      emoji: '📺', title: '유튜브 트렌드 랩',
+      url: 'https://metasongi.github.io/youtube-trend-lab/',
+      desc: '인기 영상·뜨는 키워드·조회수 실시간 분석. 무료 API 키로 동작.',
+      tags: ['분석', 'AI'],
+      hue: ['#3a0e0e', '#5a1a1a'],
+    },
+    {
+      emoji: '🌸', title: '히나 클래스',
+      url: 'https://metasongi.github.io/hina-lecture/',
+      desc: '강사·학생 강의 플랫폼 — 승인제 반 관리, tldraw 화이트보드, 주차별 자료, 과제.',
+      tags: ['교육'],
+      hue: ['#4a0e2e', '#6a1a44'],
+    },
   ];
 
   const ALL = '전체';
