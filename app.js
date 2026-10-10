@@ -101,6 +101,20 @@
       tags: ['교육'],
       hue: ['#4a0e2e', '#6a1a44'],
     },
+    {
+      emoji: '🗜️', title: '이미지 압축기',
+      url: 'https://metasongi.github.io/image-compressor/',
+      desc: '사진 용량 줄이기 — WebP/JPG/PNG 변환, 품질·크기 조절, 일괄 압축.',
+      tags: ['생산성'],
+      hue: ['#0e3a2a', '#1a5a3a'],
+    },
+    {
+      emoji: '📄', title: 'PDF 합치기',
+      url: 'https://metasongi.github.io/pdf-merger/',
+      desc: '여러 PDF를 순서대로 하나로 — 순서 변경, 페이지 수 표시.',
+      tags: ['생산성'],
+      hue: ['#2a0e3a', '#3a1a4a'],
+    },
   ];
 
   const ALL = '전체';
