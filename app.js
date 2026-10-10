@@ -45,6 +45,41 @@
       tags: ['디지털트윈', '3D'],
       hue: ['#0e3a4a', '#155a70'],
     },
+    {
+      emoji: '🏭', title: '컨베이어 분류 퍼즐',
+      url: 'https://metasongi.github.io/loop-sort-factory/',
+      desc: '2026 대세 Sort 메카닉 — 흘러오는 제품을 같은 색 분류함에! 콤보와 레벨업.',
+      tags: ['게임'],
+      hue: ['#5e3a0e', '#8a5a1a'],
+    },
+    {
+      emoji: '🧱', title: '블록 블라스트 미니',
+      url: 'https://metasongi.github.io/block-blast-mini/',
+      desc: '2026 대세 Block 메카닉 — 8×8 보드에 블록을 놓고 한 줄씩 터뜨리자.',
+      tags: ['게임'],
+      hue: ['#1a2a5e', '#2a3a8a'],
+    },
+    {
+      emoji: '🗼', title: '타워 스택',
+      url: 'https://metasongi.github.io/stack-tower/',
+      desc: '원터치 하이퍼캐주얼 — 움직이는 블록을 터치로 떨어뜨려 높이 쌓기.',
+      tags: ['게임'],
+      hue: ['#2a0e4a', '#4a1a7a'],
+    },
+    {
+      emoji: '⏱️', title: '집중 타이머',
+      url: 'https://metasongi.github.io/focus-timer/',
+      desc: '뽀모도로 타이머 + 세션 기록 — 오늘 집중 시간·연속 일수·주간 차트.',
+      tags: ['생산성'],
+      hue: ['#0e4a3a', '#1a6a54'],
+    },
+    {
+      emoji: '📊', title: '스마트공장 KPI 대시보드',
+      url: 'https://metasongi.github.io/factory-kpi-dashboard/',
+      desc: 'OEE 게이지 · 생산량 추이 · 설비 상태 · 알람 — 실시간 공장 모니터링.',
+      tags: ['디지털트윈', '분석'],
+      hue: ['#3a0e2a', '#5a1a40'],
+    },
   ];
 
   const ALL = '전체';
