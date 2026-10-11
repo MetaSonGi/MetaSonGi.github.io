@@ -115,6 +115,13 @@
       tags: ['생산성'],
       hue: ['#2a0e3a', '#3a1a4a'],
     },
+    {
+      emoji: '🛰️', title: 'HRD 데이터랩',
+      url: 'https://metasongi.github.io/hrd-data-lab/',
+      desc: '한국산업인력공단 MCP 실시간 조회 — 국가자격 시험일정·합격률·수수료, 해외취업·NCS·EPS 42종 도구.',
+      tags: ['데이터'],
+      hue: ['#0e2a4a', '#1a3a6a'],
+    },
   ];
 
   const ALL = '전체';
