@@ -95,9 +95,9 @@
       hue: ['#3a0e0e', '#5a1a1a'],
     },
     {
-      emoji: '🌸', title: '히나 클래스',
-      url: 'https://metasongi.github.io/hina-lecture/',
-      desc: '강사·학생 강의 플랫폼 — 승인제 반 관리, tldraw 화이트보드, 주차별 자료, 과제.',
+      emoji: '🎨', title: '메타송이 클래스',
+      url: 'https://metasongi.github.io/metasongi-class/',
+      desc: '실시간 강의 플랫폼 — 함께 그리는 화이트보드, 승인제 반 관리, 주차별 자료, 과제.',
       tags: ['교육'],
       hue: ['#4a0e2e', '#6a1a44'],
     },
