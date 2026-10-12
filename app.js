@@ -122,6 +122,41 @@
       tags: ['데이터'],
       hue: ['#0e2a4a', '#1a3a6a'],
     },
+    {
+      emoji: '🍉', title: '드롭 머지 퍼즐',
+      url: 'https://metasongi.github.io/drop-merge-puzzle/',
+      desc: '수박게임류 과일 합성 — 같은 과일을 합쳐 11단계 진화! 콤보 폭발.',
+      tags: ['게임'],
+      hue: ['#2a5e0e', '#4a8a1a'],
+    },
+    {
+      emoji: '🚇', title: '메트로 라인',
+      url: 'https://metasongi.github.io/metro-lines/',
+      desc: '지하철 노선 잇기 — 승객을 목적지까지 배달하는 노선 퍼즐.',
+      tags: ['게임'],
+      hue: ['#0e2a5e', '#1a4a8a'],
+    },
+    {
+      emoji: '🧹', title: '청소 시뮬레이터',
+      url: 'https://metasongi.github.io/cleaning-simulator/',
+      desc: '문질러 닦는 청소 게임 — 5 스테이지, 별점 도전.',
+      tags: ['게임'],
+      hue: ['#3a5e5e', '#5a8a8a'],
+    },
+    {
+      emoji: '🃏', title: '로그라이크 카드 배틀',
+      url: 'https://metasongi.github.io/roguelike-card-battle/',
+      desc: '발라트로류 포커 덱빌딩 — 8 라운드 생존, 조커 8종 수집.',
+      tags: ['게임'],
+      hue: ['#4a0e3a', '#6a1a54'],
+    },
+    {
+      emoji: '🏭', title: '방치형 공장 타이쿤',
+      url: 'https://metasongi.github.io/idle-factory-tycoon/',
+      desc: '방치형 공장 경영 — 기계 6종 자동 생산, 오프라인 보상.',
+      tags: ['게임'],
+      hue: ['#5e4a0e', '#8a6a1a'],
+    },
   ];
 
   const ALL = '전체';
