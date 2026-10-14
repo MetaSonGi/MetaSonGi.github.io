@@ -241,10 +241,33 @@
   }, { threshold: 0.5 });
   document.querySelectorAll('.stat-num').forEach((el) => io.observe(el));
 
-  /* ---------- 판교 야경 스카이라인 ---------- */
+  /* ---------- 판교 야경 스카이라인 + 스마트공장 + 게임 요소 ---------- */
   const cv = document.getElementById('skyline');
   const ctx = cv.getContext('2d');
   let W, H, buildings = [], stars = [];
+  let factory = null, smokes = [], coins = [], bot = null, bursts = [], popups = [];
+  let clickScore = 0;
+
+  function rr(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function newCoin(anyY) {
+    return {
+      x: Math.random() * W,
+      y: anyY ? Math.random() * H * 0.65 : H * 0.7 + Math.random() * H * 0.25,
+      r: 5 + Math.random() * 4,
+      vy: 0.25 + Math.random() * 0.45,
+      tw: Math.random() * 6.28,
+      sp: 1 + Math.random() * 2,
+    };
+  }
 
   function build() {
     W = cv.width = cv.offsetWidth;
@@ -266,7 +289,219 @@
       x: Math.random() * W, y: Math.random() * H * 0.5,
       tw: Math.random() * 6.28, sp: 0.3 + Math.random() * 1.2,
     }));
+    // 스마트공장 (하단 우측)
+    const fw = Math.max(200, Math.min(430, W * 0.42));
+    const fh = Math.max(120, H * 0.24);
+    const fx = W - fw - Math.max(8, W * 0.03);
+    factory = {
+      x: fx, y: H - fh, w: fw, h: fh,
+      stacks: [
+        { x: fx + fw * 0.16, w: 26, h: fh * 0.8 },
+        { x: fx + fw * 0.30, w: 22, h: fh * 0.62 },
+      ],
+      winCols: Math.max(3, Math.floor(fw / 36)),
+    };
+    smokes = []; bursts = []; popups = [];
+    coins = Array.from({ length: 7 }, () => newCoin(true));
+    bot = { x: -60, speed: 0.6 + Math.random() * 0.5 };
   }
+
+  function drawFactory(t) {
+    const f = factory;
+    if (!f) return;
+    const { x, y, w, h } = f;
+    // 본관
+    ctx.fillStyle = '#0d1326';
+    ctx.fillRect(x, y, w, h);
+    // 톱니 지붕
+    ctx.fillStyle = '#141d36';
+    const teeth = 5, tw = w / teeth;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    for (let i = 0; i < teeth; i++) {
+      ctx.lineTo(x + i * tw + tw * 0.5, y - 24);
+      ctx.lineTo(x + (i + 1) * tw, y);
+    }
+    ctx.lineTo(x + w, y + h);
+    ctx.lineTo(x, y + h);
+    ctx.closePath();
+    ctx.fill();
+    // 창문 (따뜻한 불빛, 일부는 깜빡임)
+    for (let c = 0; c < f.winCols; c++) {
+      for (let r = 0; r < 2; r++) {
+        const wx = x + 14 + c * 36, wy = y + 30 + r * 32;
+        const on = Math.sin(t * 0.001 + c * 1.7 + r * 3.1) > -0.2;
+        ctx.globalAlpha = on ? 0.9 : 0.22;
+        ctx.fillStyle = on ? '#ffd88a' : '#1c2742';
+        ctx.fillRect(wx, wy, 18, 14);
+      }
+    }
+    ctx.globalAlpha = 1;
+    // 굴뚝 + 연기 + 경광등
+    f.stacks.forEach((s, si) => {
+      const sx = s.x, sy = y - s.h;
+      ctx.fillStyle = '#141c33';
+      ctx.fillRect(sx, sy, s.w, s.h);
+      ctx.fillStyle = '#1d2745';
+      ctx.fillRect(sx - 3, sy, s.w + 6, 8);
+      if (smokes.length < 150 && Math.random() < 0.3) {
+        smokes.push({
+          x: sx + s.w / 2, y: sy - 4,
+          r: 6 + Math.random() * 5,
+          vx: (Math.random() - 0.5) * 0.4, vy: 0.5 + Math.random() * 0.5,
+          life: 1,
+        });
+      }
+      const blink = Math.sin(t * 0.004 + si * 2.4) > 0;
+      if (blink) {
+        ctx.globalAlpha = 0.25;
+        ctx.fillStyle = '#ff4d5e';
+        ctx.beginPath(); ctx.arc(sx + s.w / 2, sy - 8, 11, 0, 7); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      ctx.fillStyle = blink ? '#ff4d5e' : '#5a1f28';
+      ctx.beginPath(); ctx.arc(sx + s.w / 2, sy - 8, 4, 0, 7); ctx.fill();
+    });
+    // 컨베이어 벨트 + 움직이는 박스
+    const beltY = y + h - 24;
+    ctx.fillStyle = '#0a0f20';
+    ctx.fillRect(x, beltY, w, 10);
+    ctx.fillStyle = '#22304f';
+    const off = (t * 0.05) % 18;
+    for (let bx = -18; bx < w + 18; bx += 18) {
+      ctx.fillRect(x + bx + off, beltY + 4, 8, 2);
+    }
+    for (let i = 0; i < 3; i++) {
+      const px = x + ((i * w / 3 + t * 0.035) % w);
+      ctx.fillStyle = '#2f81f7';
+      ctx.fillRect(px, beltY - 17, 14, 14);
+      ctx.fillStyle = '#1f6feb';
+      ctx.fillRect(px, beltY - 17, 14, 4);
+    }
+    // 간판
+    ctx.globalAlpha = 0.75 + 0.25 * Math.sin(t * 0.002);
+    ctx.fillStyle = '#00e5a0';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('SMART FACTORY', x + w / 2, y + 18);
+    ctx.globalAlpha = 1;
+  }
+
+  function drawSmokes() {
+    smokes = smokes.filter((s) => s.life > 0);
+    smokes.forEach((s) => {
+      s.x += s.vx; s.y -= s.vy; s.r += 0.12; s.life -= 0.008;
+      ctx.globalAlpha = Math.max(0, s.life) * 0.32;
+      ctx.fillStyle = '#8b9bb4';
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  // 게임 요소 1: 하늘에 떠다니는 코인
+  function drawCoins(t) {
+    coins.forEach((c) => {
+      c.y -= c.vy;
+      if (c.y < -20) Object.assign(c, newCoin(false));
+      const tw = 0.5 + 0.5 * Math.abs(Math.sin(t * 0.001 * c.sp + c.tw));
+      ctx.save();
+      ctx.translate(c.x, c.y);
+      ctx.scale(Math.abs(Math.cos(t * 0.002 * c.sp + c.tw)) * 0.7 + 0.3, 1);
+      ctx.globalAlpha = 0.35 + 0.55 * tw;
+      ctx.fillStyle = '#ffd166';
+      ctx.beginPath(); ctx.arc(0, 0, c.r, 0, 7); ctx.fill();
+      ctx.fillStyle = '#8a5a00';
+      ctx.font = 'bold ' + Math.round(c.r) + 'px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('★', 0, 1);
+      ctx.restore();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  // 게임 요소 2: 하단을 걸어다니는 작은 로봇
+  function drawBot(t) {
+    const b = bot;
+    if (!b) return;
+    b.x += b.speed;
+    if (b.x > W + 60) { b.x = -60; b.speed = 0.5 + Math.random() * 0.6; }
+    const bob = Math.abs(Math.sin(t * 0.008)) * 4;
+    const y = H - 40 - bob, x = b.x;
+    ctx.globalAlpha = 0.3;
+    ctx.fillStyle = '#000';
+    ctx.beginPath(); ctx.ellipse(x, H - 32, 16, 4, 0, 0, 7); ctx.fill();
+    ctx.globalAlpha = 1;
+    // 다리
+    const swing = Math.sin(t * 0.02) * 5;
+    ctx.strokeStyle = '#1f6feb'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x - 5, y); ctx.lineTo(x - 5 + swing, y + 12); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x + 5, y); ctx.lineTo(x + 5 - swing, y + 12); ctx.stroke();
+    // 몸통
+    ctx.fillStyle = '#2f81f7';
+    rr(x - 12, y - 22, 24, 24, 6); ctx.fill();
+    ctx.fillStyle = '#1f6feb';
+    ctx.fillRect(x - 12, y - 8, 24, 4);
+    // 머리
+    ctx.fillStyle = '#58a6ff';
+    rr(x - 9, y - 38, 18, 14, 5); ctx.fill();
+    // 눈 (깜빡임)
+    ctx.fillStyle = '#0d1117';
+    if (Math.sin(t * 0.003) > 0.96) {
+      ctx.fillRect(x - 6, y - 32, 12, 2);
+    } else {
+      ctx.fillRect(x - 6, y - 33, 4, 4);
+      ctx.fillRect(x + 2, y - 33, 4, 4);
+    }
+    // 안테나
+    ctx.strokeStyle = '#58a6ff'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x, y - 38); ctx.lineTo(x, y - 46); ctx.stroke();
+    ctx.fillStyle = '#ff4d5e';
+    ctx.globalAlpha = 0.5 + 0.5 * Math.abs(Math.sin(t * 0.005));
+    ctx.beginPath(); ctx.arc(x, y - 48, 3, 0, 7); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  // 게임 요소 3: 클릭 파티클 + 점수 팝업
+  function drawBursts() {
+    bursts = bursts.filter((p) => p.life > 0);
+    bursts.forEach((p) => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.life -= 0.02;
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
+    });
+    ctx.globalAlpha = 1;
+    popups = popups.filter((p) => p.life > 0);
+    popups.forEach((p) => {
+      p.y -= 0.8; p.life -= 0.015;
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = '#ffd166';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+      ctx.fillText(p.text, p.x, p.y);
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  document.querySelector('.hero').addEventListener('pointerdown', (e) => {
+    const r = cv.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    if (x < 0 || y < 0 || x > r.width || y > r.height) return;
+    clickScore++;
+    const colors = ['#ffd166', '#00e5a0', '#58a6ff', '#ff7ab8'];
+    for (let i = 0; i < 12; i++) {
+      const a = Math.random() * Math.PI * 2, sp = 1 + Math.random() * 3;
+      bursts.push({
+        x, y,
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1,
+        life: 1, color: colors[i % colors.length],
+      });
+    }
+    popups.push({ x, y: y - 12, text: '+' + clickScore, life: 1 });
+    const badge = document.getElementById('clickScore');
+    if (badge) badge.textContent = clickScore;
+  });
 
   function draw(t) {
     ctx.clearRect(0, 0, W, H);
@@ -314,6 +549,12 @@
     ng.addColorStop(1, 'rgba(160,107,255,0)');
     ctx.fillStyle = ng;
     ctx.fillRect(0, H - 2, W, 2);
+    // 게임 요소: 코인 → 로봇(공장 뒤) → 공장 → 연기 → 클릭 파티클
+    drawCoins(t);
+    drawBot(t);
+    drawFactory(t);
+    drawSmokes();
+    drawBursts();
     requestAnimationFrame(draw);
   }
 
