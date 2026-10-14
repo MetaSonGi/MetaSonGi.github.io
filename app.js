@@ -157,6 +157,41 @@
       tags: ['게임'],
       hue: ['#5e4a0e', '#8a6a1a'],
     },
+    {
+      emoji: '🖌️', title: '그림 3D 변환기',
+      url: 'https://metasongi.github.io/draw-to-3d/',
+      desc: '그림·이미지를 높이맵 릴리프 3D로 변환. STL/OBJ/GLB 다운로드, OctoPrint 프린터 전송.',
+      tags: ['3D', 'AI'],
+      hue: ['#0e3a5e', '#1a5a8a'],
+    },
+    {
+      emoji: '☁️', title: '포인트 클라우드 스튜디오',
+      url: 'https://metasongi.github.io/point-cloud-studio/',
+      desc: '이미지·영상에서 AI 깊이 추정으로 3D 포인트 클라우드 생성. PLY/깊이맵 내보내기.',
+      tags: ['3D', 'AI'],
+      hue: ['#2a0e5e', '#4a1a8a'],
+    },
+    {
+      emoji: '🎬', title: 'AI 영상 스튜디오',
+      url: 'https://metasongi.github.io/ai-video-studio/',
+      desc: '프롬프트로 AI 영상 생성 — 본인 API 키로 직접 호출(BYOK), 화면비율·길이·모델 선택, MP4 다운로드.',
+      tags: ['AI', '생산성'],
+      hue: ['#5e0e2a', '#8a1a44'],
+    },
+    {
+      emoji: '🎞️', title: '모션 스튜디오',
+      url: 'https://metasongi.github.io/motion-studio/',
+      desc: '배경 영상·이미지 위에 움직이는 글자 — 키네틱 타이포·로어 서드·자막, 텍스트 스타일·위치·타자기 효과, MP4/WebM 다운로드.',
+      tags: ['생산성', '아트'],
+      hue: ['#0e3a2a', '#1a5a3a'],
+    },
+    {
+      emoji: '🖥️', title: '웹 디자인 스튜디오',
+      url: 'https://metasongi.github.io/web-design-studio/',
+      desc: '비주얼 월드 6종으로 랜딩페이지 제작 — 섹션 8종·폰트·컬러 커스텀, 이미지 내장, 독립 실행 html 다운로드.',
+      tags: ['생산성', '아트'],
+      hue: ['#2a0e4a', '#4a1a7a'],
+    },
   ];
 
   const ALL = '전체';
