@@ -192,6 +192,41 @@
       tags: ['생산성', '아트'],
       hue: ['#2a0e4a', '#4a1a7a'],
     },
+    {
+      emoji: '🎧', title: '공간 음향 랩',
+      url: 'https://metasongi.github.io/spatial-audio-lab/',
+      desc: 'SuperCollider식 공간 음향 — WebAudio HRTF 3D 패닝, 음원 8개·공전/흔들림, 리버브, 프리셋 4종, 녹음.',
+      tags: ['아트'],
+      hue: ['#0e2a3a', '#1a4a5e'],
+    },
+    {
+      emoji: '💡', title: '프롬프트 갤러리',
+      url: 'https://metasongi.github.io/prompt-gallery/',
+      desc: '프롬프트 35개 내장 — 변수 치환, SNS 8종·트렌드 스타일 8종, 프롬프트 최적화기(100점 진단·자동 개선안).',
+      tags: ['AI', '생산성'],
+      hue: ['#3a2a0e', '#6a4a1a'],
+    },
+    {
+      emoji: '📝', title: '문서 → 마크다운',
+      url: 'https://metasongi.github.io/doc-to-markdown/',
+      desc: 'HTML/CSV/JSON/TXT/XML을 마크다운으로 변환 — 드래그앤드롭 일괄 변환, 복사·다운로드.',
+      tags: ['생산성'],
+      hue: ['#1a2a3a', '#2a4a5e'],
+    },
+    {
+      emoji: '🗺️', title: '만화 로케헌터',
+      url: 'https://metasongi.github.io/manga-location-scout/',
+      desc: '어디서든 로케헌 — OSM 건물 데이터+표고로 만화 선화·스크린톤 3D 렌더링, PNG 다운로드·URL 공유.',
+      tags: ['아트', '3D'],
+      hue: ['#2a2a2a', '#4a4a4a'],
+    },
+    {
+      emoji: '💬', title: 'AI라운지',
+      url: 'https://metasongi.github.io/ai-lounge/',
+      desc: '현장이 묻고, AI가 돕다 — 영상·이미지 폴더를 컨셉별로 자동 분류하고 갤러리 5종(그리드·3D 월·시네마)으로 전시.',
+      tags: ['AI', '생산성'],
+      hue: ['#4a2a08', '#8a5a1a'],
+    },
   ];
 
   const ALL = '전체';
