@@ -227,6 +227,20 @@
       tags: ['AI', '생산성'],
       hue: ['#4a2a08', '#8a5a1a'],
     },
+    {
+      emoji: '🖼️', title: '사진전시관',
+      url: 'https://metasongi.github.io/photo-exhibition/',
+      desc: '사진을 거는 다섯 개의 방 — 화이트큐브·다크룸·3D 전시관 워크스루·프로젝터·매거진, 전시 제목·캡션 직접 수정.',
+      tags: ['아트'],
+      hue: ['#3a3226', '#5e533e'],
+    },
+    {
+      emoji: '🤖', title: '로봇 기술 전시관',
+      url: 'https://metasongi.github.io/robot-exhibition/',
+      desc: '기계가 만든 풍경, 기술의 초상 — 로봇·자동화 기술을 다섯 개의 전시실에 거는 기술 전시.',
+      tags: ['AI', '아트'],
+      hue: ['#0e2a3a', '#1a4a6e'],
+    },
   ];
 
   const ALL = '전체';
