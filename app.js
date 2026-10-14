@@ -246,7 +246,8 @@
   const ctx = cv.getContext('2d');
   let W, H, buildings = [], stars = [];
   let factory = null, smokes = [], coins = [], bot = null, bursts = [], popups = [];
-  let clickScore = 0;
+  let clickScore = 0, combo = 0, lastClickT = 0, bestScore = 0;
+  try { bestScore = parseInt(localStorage.getItem('hub_best') || '0', 10) || 0; } catch (e) {}
   let mTX = 0, mTY = 0, parX = 0, parY = 0; // 마우스 패럴랙스
 
   const heroEl = document.querySelector('.hero');
@@ -312,7 +313,7 @@
     };
     smokes = []; bursts = []; popups = [];
     coins = Array.from({ length: 7 }, () => newCoin(true));
-    bot = { x: -60, speed: 0.6 + Math.random() * 0.5 };
+    bot = { x: -60, speed: 0.6 + Math.random() * 0.5, jy: 0, jv: 0 };
   }
 
   function drawFactory(t) {
@@ -429,14 +430,19 @@
     ctx.globalAlpha = 1;
   }
 
-  // 게임 요소 2: 하단을 걸어다니는 작은 로봇
+  // 게임 요소 2: 하단을 걸어다니는 작은 로봇 (클릭하면 점프!)
   function drawBot(t) {
     const b = bot;
     if (!b) return;
     b.x += b.speed;
     if (b.x > W + 60) { b.x = -60; b.speed = 0.5 + Math.random() * 0.6; }
+    // 점프 물리
+    if (b.jv || b.jy) {
+      b.jy += b.jv; b.jv += 0.45;
+      if (b.jy >= 0) { b.jy = 0; b.jv = 0; }
+    }
     const bob = Math.abs(Math.sin(t * 0.008)) * 4;
-    const y = H - 40 - bob, x = b.x;
+    const y = H - 40 - bob + b.jy, x = b.x;
     ctx.globalAlpha = 0.3;
     ctx.fillStyle = '#000';
     ctx.beginPath(); ctx.ellipse(x, H - 32, 16, 4, 0, 0, 7); ctx.fill();
@@ -493,12 +499,9 @@
     ctx.globalAlpha = 1;
   }
 
-  document.querySelector('.hero').addEventListener('pointerdown', (e) => {
-    const r = cv.getBoundingClientRect();
-    const x = e.clientX - r.left, y = e.clientY - r.top;
-    if (x < 0 || y < 0 || x > r.width || y > r.height) return;
-    clickScore++;
-    const colors = ['#ffd166', '#00e5a0', '#58a6ff', '#ff7ab8'];
+  // 게임 요소 3: 클릭 파티클 + 점수 팝업 + 코인/로봇 맞추기 + 콤보
+  function burst(x, y, color) {
+    const colors = color ? [color] : ['#ffd166', '#00e5a0', '#58a6ff', '#ff7ab8'];
     for (let i = 0; i < 12; i++) {
       const a = Math.random() * Math.PI * 2, sp = 1 + Math.random() * 3;
       bursts.push({
@@ -507,10 +510,59 @@
         life: 1, color: colors[i % colors.length],
       });
     }
-    popups.push({ x, y: y - 12, text: '+' + clickScore, life: 1 });
+  }
+
+  heroEl.addEventListener('pointerdown', (e) => {
+    const r = cv.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    if (x < 0 || y < 0 || x > r.width || y > r.height) return;
+    // 콤보: 1.5초 안에 연속 클릭하면 콤보 상승 (최대 x5)
+    const now = performance.now();
+    combo = (now - lastClickT < 1500) ? combo + 1 : 1;
+    lastClickT = now;
+    const mult = Math.min(combo, 5);
+
+    const ox = parX * 36, oy = parY * 14; // 코인·로봇 레이어 오프셋
+    let pts = 1, label = null, color = null;
+    // 코인 맞추기 (+10)
+    for (const c of coins) {
+      const dx = x - (c.x + ox), dy = y - (c.y + oy);
+      if (dx * dx + dy * dy < (c.r + 14) * (c.r + 14)) {
+        pts = 10; label = '🪙'; color = '#ffd166';
+        Object.assign(c, newCoin(false)); // 먹은 코인은 새 위치에 리스폰
+        break;
+      }
+    }
+    // 로봇 맞추기 (+5, 점프!)
+    if (!label && bot) {
+      const bx = bot.x + ox, by = H - 40 + oy;
+      if (Math.abs(x - bx) < 36 && Math.abs(y - by) < 48) {
+        if (!bot.jv && !bot.jy) bot.jv = -7.5;
+        pts = 5; label = '🤖 뿅!'; color = '#58a6ff';
+      }
+    }
+    burst(x, y, color);
+    const gained = pts * mult;
+    clickScore += gained;
+    popups.push({
+      x, y: y - 12,
+      text: (label ? label + ' ' : '') + '+' + gained + (mult > 1 ? ' x' + mult : ''),
+      life: 1,
+    });
     const badge = document.getElementById('clickScore');
     if (badge) badge.textContent = clickScore;
+    if (clickScore > bestScore) {
+      bestScore = clickScore;
+      try { localStorage.setItem('hub_best', String(bestScore)); } catch (err) {}
+      const bb = document.getElementById('bestScore');
+      if (bb) bb.textContent = bestScore;
+    }
   });
+  // 최고점수 표시 초기화
+  (function () {
+    const bb = document.getElementById('bestScore');
+    if (bb) bb.textContent = bestScore;
+  })();
 
   function draw(t) {
     ctx.clearRect(0, 0, W, H);
