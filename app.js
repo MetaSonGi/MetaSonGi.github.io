@@ -195,6 +195,11 @@
   ];
 
   const ALL = '전체';
+  const TAG_IMG = {
+    '게임': 'game.jpg', '3D': '3d.jpg', 'AI': 'ai.jpg',
+    '디지털트윈': 'twin.jpg', '교육': 'edu.jpg', '아트': 'art.jpg',
+    '생산성': 'productivity.jpg', '분석': 'analytics.jpg', '데이터': 'data.jpg',
+  };
   const filters = [ALL, ...new Set(PROJECTS.flatMap((p) => p.tags))];
   const filtersEl = document.getElementById('filters');
   const galleryEl = document.getElementById('gallery');
@@ -209,10 +214,15 @@
 
   function renderGallery() {
     const list = PROJECTS.filter((p) => active === ALL || p.tags.includes(active));
-    galleryEl.innerHTML = list.map((p) => `
+    galleryEl.innerHTML = list.map((p) => {
+      const img = 'img/' + (TAG_IMG[p.tags[0]] || 'ai.jpg');
+      return `
       <a class="card" href="${p.url}" target="_blank" rel="noopener">
-        <div class="card-art" style="background: linear-gradient(135deg, ${p.hue[0]}, ${p.hue[1]});">
-          <span>${p.emoji}</span><span class="ext">↗</span>
+        <div class="card-art">
+          <img src="${img}" alt="${p.title}" loading="lazy" />
+          <div class="card-shade"></div>
+          <span class="card-emoji">${p.emoji}</span>
+          <span class="ext">↗</span>
         </div>
         <div class="card-body">
           <h3>${p.title}</h3>
@@ -220,7 +230,8 @@
           <p>${p.desc}</p>
           <div class="tags">${p.tags.map((t) => `<span class="tag">${t}</span>`).join('')}</div>
         </div>
-      </a>`).join('');
+      </a>`;
+    }).join('');
   }
   renderFilters();
   renderGallery();
@@ -246,6 +257,11 @@
   const ctx = cv.getContext('2d');
   let W, H, buildings = [], stars = [];
   let factory = null, smokes = [], coins = [], bot = null, bursts = [], popups = [];
+  let auroras = [], meteors = [], chips = [];
+  const CHIP_DEFS = [
+    { e: '⚙️', label: 'IoT' }, { e: '🤖', label: 'AI' },
+    { e: '🏭', label: 'Factory' }, { e: '🧊', label: '3D' },
+  ];
   let clickScore = 0, combo = 0, lastClickT = 0, bestScore = 0;
   try { bestScore = parseInt(localStorage.getItem('hub_best') || '0', 10) || 0; } catch (e) {}
   let mTX = 0, mTY = 0, parX = 0, parY = 0; // 마우스 패럴랙스
@@ -276,6 +292,18 @@
       vy: 0.25 + Math.random() * 0.45,
       tw: Math.random() * 6.28,
       sp: 1 + Math.random() * 2,
+    };
+  }
+
+  function newChip(anyY) {
+    const d = CHIP_DEFS[Math.floor(Math.random() * CHIP_DEFS.length)];
+    return {
+      e: d.e, label: d.label,
+      x: Math.random() * W,
+      y: anyY ? Math.random() * H * 0.6 : H + 40,
+      vy: 0.2 + Math.random() * 0.3,
+      tw: Math.random() * 6.28,
+      _sx: 0, _sy: 0,
     };
   }
 
@@ -313,7 +341,103 @@
     };
     smokes = []; bursts = []; popups = [];
     coins = Array.from({ length: 7 }, () => newCoin(true));
+    chips = Array.from({ length: 4 }, () => newChip(true));
+    meteors = [];
+    const ar = Math.min(W, H);
+    auroras = [
+      { x: W * 0.25, y: H * 0.28, r: ar * 0.5, c: '106,92,255', a: 0.16, sp: 0.00012, ph: 0 },
+      { x: W * 0.68, y: H * 0.34, r: ar * 0.44, c: '0,229,160', a: 0.12, sp: 0.0001, ph: 2 },
+      { x: W * 0.48, y: H * 0.14, r: ar * 0.38, c: '88,166,255', a: 0.12, sp: 0.00014, ph: 4 },
+    ];
     bot = { x: -60, speed: 0.6 + Math.random() * 0.5, jy: 0, jv: 0 };
+  }
+
+  // 오로라 배경
+  function drawAuroras(t) {
+    auroras.forEach((a) => {
+      const x = a.x + Math.sin(t * a.sp + a.ph) * 46;
+      const y = a.y + Math.cos(t * a.sp * 1.3 + a.ph) * 26;
+      const g = ctx.createRadialGradient(x, y, 0, x, y, a.r);
+      g.addColorStop(0, 'rgba(' + a.c + ',' + a.a + ')');
+      g.addColorStop(1, 'rgba(' + a.c + ',0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(x - a.r, y - a.r, a.r * 2, a.r * 2);
+    });
+  }
+
+  // 신스웨이브 그리드 플로어
+  function drawGridFloor(t) {
+    const top = H - 70;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, top, W, H - top);
+    ctx.clip();
+    const gap = 34;
+    const off = (t * 0.03) % gap;
+    for (let y = top + off; y < H + gap; y += gap) {
+      ctx.globalAlpha = 0.08 + 0.22 * ((y - top) / (H - top));
+      ctx.strokeStyle = '#00e5a0';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    ctx.globalAlpha = 0.12;
+    ctx.strokeStyle = '#58a6ff';
+    const cx = W / 2 + parX * 40;
+    for (let i = -10; i <= 10; i++) {
+      ctx.beginPath();
+      ctx.moveTo(cx + i * 44, top);
+      ctx.lineTo(cx + i * 170, H);
+      ctx.stroke();
+    }
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  }
+
+  // 유성
+  function drawMeteors() {
+    if (Math.random() < 0.006 && meteors.length < 3) {
+      meteors.push({
+        x: Math.random() * W * 0.8 + W * 0.1,
+        y: Math.random() * H * 0.3,
+        vx: -(4 + Math.random() * 3), vy: 2 + Math.random() * 2,
+        life: 1,
+      });
+    }
+    meteors = meteors.filter((m) => m.life > 0);
+    meteors.forEach((m) => {
+      m.x += m.vx; m.y += m.vy; m.life -= 0.02;
+      const tx = m.x - m.vx * 12, ty = m.y - m.vy * 12;
+      const g = ctx.createLinearGradient(m.x, m.y, tx, ty);
+      g.addColorStop(0, 'rgba(255,255,255,' + (0.9 * Math.max(0, m.life)).toFixed(2) + ')');
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.strokeStyle = g;
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(tx, ty); ctx.stroke();
+    });
+  }
+
+  // 게임 요소: 떠다니는 테크 칩 (클릭하면 +3)
+  function drawChips(t) {
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    chips.forEach((ch) => {
+      ch.y -= ch.vy;
+      if (ch.y < -40) Object.assign(ch, newChip(false));
+      const x = ch.x + Math.sin(t * 0.0008 + ch.tw) * 14;
+      const y = ch.y + Math.cos(t * 0.001 + ch.tw) * 6;
+      ch._sx = x; ch._sy = y;
+      ctx.globalAlpha = 0.8;
+      ctx.fillStyle = 'rgba(20,28,50,0.55)';
+      rr(x - 38, y - 15, 76, 30, 15); ctx.fill();
+      ctx.globalAlpha = 0.9;
+      ctx.strokeStyle = 'rgba(88,166,255,0.35)';
+      ctx.lineWidth = 1;
+      rr(x - 38, y - 15, 76, 30, 15); ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#eaf2f8';
+      ctx.font = '12px sans-serif';
+      ctx.fillText(ch.e + ' ' + ch.label, x, y + 1);
+    });
   }
 
   function drawFactory(t) {
@@ -541,6 +665,17 @@
         pts = 5; label = '🤖 뿅!'; color = '#58a6ff';
       }
     }
+    // 테크 칩 맞추기 (+3)
+    if (!label) {
+      for (const ch of chips) {
+        const dx = x - (ch._sx + ox), dy = y - (ch._sy + oy);
+        if (dx * dx + dy * dy < 42 * 42) {
+          pts = 3; label = ch.e; color = '#00e5a0';
+          Object.assign(ch, newChip(false));
+          break;
+        }
+      }
+    }
     burst(x, y, color);
     const gained = pts * mult;
     clickScore += gained;
@@ -572,6 +707,8 @@
     const g = ctx.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0, '#070b16'); g.addColorStop(0.7, '#0c1430'); g.addColorStop(1, '#101c3f');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    drawAuroras(t);
+    drawMeteors();
     // 별
     stars.forEach((s) => {
       ctx.globalAlpha = 0.25 + 0.55 * Math.abs(Math.sin(t * 0.001 * s.sp + s.tw));
@@ -614,10 +751,11 @@
     ng.addColorStop(1, 'rgba(160,107,255,0)');
     ctx.fillStyle = ng;
     ctx.fillRect(0, H - 2, W, 2);
-    // 게임 요소: 코인 → 로봇(공장 뒤) → 공장 → 연기 → 클릭 파티클
-    // 코인·로봇은 공장보다 살짝 더 움직이는 레이어
+    drawGridFloor(t);
+    // 게임 요소: 칩 → 코인 → 로봇(공장 뒤) → 공장 → 연기 → 클릭 파티클
     ctx.save();
     ctx.translate(parX * 36, parY * 14);
+    drawChips(t);
     drawCoins(t);
     drawBot(t);
     ctx.restore();
