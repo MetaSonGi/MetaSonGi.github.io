@@ -247,6 +247,15 @@
   let W, H, buildings = [], stars = [];
   let factory = null, smokes = [], coins = [], bot = null, bursts = [], popups = [];
   let clickScore = 0;
+  let mTX = 0, mTY = 0, parX = 0, parY = 0; // 마우스 패럴랙스
+
+  const heroEl = document.querySelector('.hero');
+  heroEl.addEventListener('pointermove', (e) => {
+    const r = cv.getBoundingClientRect();
+    mTX = (e.clientX - r.left) / r.width - 0.5;
+    mTY = (e.clientY - r.top) / r.height - 0.5;
+  });
+  heroEl.addEventListener('pointerleave', () => { mTX = 0; mTY = 0; });
 
   function rr(x, y, w, h, r) {
     ctx.beginPath();
@@ -505,6 +514,9 @@
 
   function draw(t) {
     ctx.clearRect(0, 0, W, H);
+    // 패럴랙스 보간 (마우스를 따라 레이어별 시차)
+    parX += (mTX - parX) * 0.06;
+    parY += (mTY - parY) * 0.06;
     const g = ctx.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0, '#070b16'); g.addColorStop(0.7, '#0c1430'); g.addColorStop(1, '#101c3f');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
@@ -512,33 +524,34 @@
     stars.forEach((s) => {
       ctx.globalAlpha = 0.25 + 0.55 * Math.abs(Math.sin(t * 0.001 * s.sp + s.tw));
       ctx.fillStyle = '#cfe0ff';
-      ctx.fillRect(s.x, s.y, 1.6, 1.6);
+      ctx.fillRect(s.x + parX * 10, s.y + parY * 6, 1.6, 1.6);
     });
     ctx.globalAlpha = 1;
     // 달
-    ctx.beginPath(); ctx.arc(W * 0.82, H * 0.18, 34, 0, 7);
+    ctx.beginPath(); ctx.arc(W * 0.82 + parX * 14, H * 0.18 + parY * 8, 34, 0, 7);
     ctx.fillStyle = '#f4f0dc'; ctx.globalAlpha = 0.9; ctx.fill(); ctx.globalAlpha = 1;
     // 빌딩
     buildings.forEach((b) => {
-      const y0 = H - b.h;
+      const bx = b.x + parX * 22, by = parY * 8;
+      const y0 = H - b.h + by;
       ctx.fillStyle = '#0a0f22';
-      ctx.fillRect(b.x, y0, b.w, b.h);
+      ctx.fillRect(bx, y0, b.w, b.h);
       ctx.fillStyle = '#131c38';
-      ctx.fillRect(b.x, y0, b.w, 4);
+      ctx.fillRect(bx, y0, b.w, 4);
       b.wins.forEach((wn) => {
         const a = 0.25 + 0.65 * Math.abs(Math.sin(t * 0.001 * wn.sp + wn.tw));
         ctx.globalAlpha = a;
         ctx.fillStyle = Math.random() < 0.001 ? '#00e5a0' : '#ffd88a';
-        ctx.fillRect(b.x + 6 + wn.c * 14, y0 + 10 + wn.r * 18, 7, 10);
+        ctx.fillRect(bx + 6 + wn.c * 14, y0 + 10 + wn.r * 18, 7, 10);
       });
       ctx.globalAlpha = 1;
       // 옥상 안테나
       if (b.w > 70) {
         ctx.fillStyle = '#1a2440';
-        ctx.fillRect(b.x + b.w / 2 - 1.5, y0 - 22, 3, 22);
+        ctx.fillRect(bx + b.w / 2 - 1.5, y0 - 22, 3, 22);
         ctx.fillStyle = '#ff4d5e';
         ctx.globalAlpha = 0.4 + 0.6 * Math.abs(Math.sin(t * 0.003 + b.x));
-        ctx.beginPath(); ctx.arc(b.x + b.w / 2, y0 - 24, 3, 0, 7); ctx.fill();
+        ctx.beginPath(); ctx.arc(bx + b.w / 2, y0 - 24, 3, 0, 7); ctx.fill();
         ctx.globalAlpha = 1;
       }
     });
@@ -550,10 +563,17 @@
     ctx.fillStyle = ng;
     ctx.fillRect(0, H - 2, W, 2);
     // 게임 요소: 코인 → 로봇(공장 뒤) → 공장 → 연기 → 클릭 파티클
+    // 코인·로봇은 공장보다 살짝 더 움직이는 레이어
+    ctx.save();
+    ctx.translate(parX * 36, parY * 14);
     drawCoins(t);
     drawBot(t);
+    ctx.restore();
+    ctx.save();
+    ctx.translate(parX * 28, parY * 10);
     drawFactory(t);
     drawSmokes();
+    ctx.restore();
     drawBursts();
     requestAnimationFrame(draw);
   }

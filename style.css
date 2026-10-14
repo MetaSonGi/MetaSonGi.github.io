@@ -44,8 +44,14 @@ a { color: inherit; }
 }
 .hero h1 { font-size: clamp(44px, 7vw, 84px); line-height: 1.08; margin: 0 0 20px; font-weight: 900; }
 .grad {
-  background: linear-gradient(92deg, var(--accent), var(--violet), var(--neon));
+  background: linear-gradient(92deg, var(--accent), var(--violet), var(--neon), var(--accent));
+  background-size: 220% auto;
   -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: sheen 7s linear infinite;
+}
+@keyframes sheen { to { background-position: 220% center; } }
+@media (prefers-reduced-motion: reduce) {
+  .grad { animation: none; }
 }
 .hero-sub { font-size: 17px; color: var(--muted); line-height: 1.8; margin: 0 0 32px; }
 .hero-cta { display: flex; gap: 12px; margin-bottom: 56px; flex-wrap: wrap; }
@@ -63,6 +69,28 @@ a { color: inherit; }
 .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
 .game-hint { margin-top: 22px; font-size: 13px; color: var(--muted); }
 .game-hint #clickScore { color: #ffd166; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+/* ---------- 트렌드 티커 ---------- */
+.ticker {
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(90deg, rgba(0,229,160,0.06), rgba(88,166,255,0.06), rgba(160,107,255,0.06));
+}
+.ticker-track {
+  display: flex; align-items: center; gap: 30px;
+  width: max-content; padding: 13px 0;
+  white-space: nowrap;
+  animation: tick 30s linear infinite;
+}
+.ticker-track span {
+  font-size: 13px; font-weight: 800; letter-spacing: 0.14em; color: var(--text);
+}
+.ticker-track i { color: var(--neon); font-style: normal; font-size: 12px; }
+@keyframes tick { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+}
 
 /* ---------- sections ---------- */
 .section { max-width: 1180px; margin: 0 auto; padding: 90px 28px 30px; }
