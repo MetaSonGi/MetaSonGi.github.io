@@ -69,6 +69,25 @@ a { color: inherit; }
 .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
 .game-hint { margin-top: 22px; font-size: 13px; color: var(--muted); }
 .game-hint #clickScore { color: #ffd166; font-weight: 800; font-variant-numeric: tabular-nums; }
+.fever-bar {
+  width: 190px; height: 7px; margin-top: 12px;
+  background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;
+  border: 1px solid rgba(255,209,102,0.25);
+}
+#feverFill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, #ffd166, #ff7ab8, #ffd166);
+  background-size: 200% 100%;
+  animation: feverflow 1.2s linear infinite;
+  border-radius: 4px;
+}
+@keyframes feverflow { to { background-position: 200% 0; } }
+.hero #skyline { transition: filter 0.4s; }
+.hero.fever #skyline { filter: saturate(1.5) brightness(1.12); }
+.hero.fever .fever-bar { box-shadow: 0 0 14px rgba(255,209,102,0.9); border-color: #ffd166; }
+@media (prefers-reduced-motion: reduce) {
+  #feverFill { animation: none; }
+}
 
 /* ---------- 트렌드 티커 ---------- */
 .ticker {

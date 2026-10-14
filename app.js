@@ -215,11 +215,13 @@
   function renderGallery() {
     const list = PROJECTS.filter((p) => active === ALL || p.tags.includes(active));
     galleryEl.innerHTML = list.map((p) => {
-      const img = 'img/' + (TAG_IMG[p.tags[0]] || 'ai.jpg');
+      const slug = p.url.split('/').filter(Boolean).pop();
+      const img = 'img/' + slug + '.jpg';
+      const fallback = 'img/' + (TAG_IMG[p.tags[0]] || 'ai.jpg');
       return `
       <a class="card" href="${p.url}" target="_blank" rel="noopener">
         <div class="card-art">
-          <img src="${img}" alt="${p.title}" loading="lazy" />
+          <img src="${img}" alt="${p.title}" loading="lazy" onerror="this.onerror=null;this.src='${fallback}'" />
           <div class="card-shade"></div>
           <span class="card-emoji">${p.emoji}</span>
           <span class="ext">↗</span>
@@ -263,6 +265,7 @@
     { e: '🏭', label: 'Factory' }, { e: '🧊', label: '3D' },
   ];
   let clickScore = 0, combo = 0, lastClickT = 0, bestScore = 0;
+  let feverGauge = 0, feverT = 0, lastFrameT = 0; // FEVER 모드
   try { bestScore = parseInt(localStorage.getItem('hub_best') || '0', 10) || 0; } catch (e) {}
   let mTX = 0, mTY = 0, parX = 0, parY = 0; // 마우스 패럴랙스
 
@@ -677,11 +680,19 @@
       }
     }
     burst(x, y, color);
-    const gained = pts * mult;
+    // FEVER 발동: 게이지가 차면 5초간 2배
+    feverGauge = Math.min(100, feverGauge + 15);
+    if (feverGauge >= 100 && feverT <= 0) {
+      feverT = 5; feverGauge = 0;
+      heroEl.classList.add('fever');
+      popups.push({ x: W / 2, y: H * 0.32, text: '🔥 FEVER TIME! 2x', life: 1.6 });
+    }
+    const fmult = feverT > 0 ? 2 : 1;
+    const gained = pts * mult * fmult;
     clickScore += gained;
     popups.push({
       x, y: y - 12,
-      text: (label ? label + ' ' : '') + '+' + gained + (mult > 1 ? ' x' + mult : ''),
+      text: (label ? label + ' ' : '') + '+' + gained + (mult > 1 ? ' x' + mult : '') + (fmult > 1 ? ' 🔥' : ''),
       life: 1,
     });
     const badge = document.getElementById('clickScore');
@@ -704,6 +715,17 @@
     // 패럴랙스 보간 (마우스를 따라 레이어별 시차)
     parX += (mTX - parX) * 0.06;
     parY += (mTY - parY) * 0.06;
+    // FEVER 타이머 & 게이지 감쇠
+    const dt = Math.min(0.05, Math.max(0.001, (t - lastFrameT) / 1000));
+    lastFrameT = t;
+    if (feverT > 0) {
+      feverT -= dt;
+      if (feverT <= 0) { feverT = 0; heroEl.classList.remove('fever'); }
+    } else {
+      feverGauge = Math.max(0, feverGauge - dt * 9);
+    }
+    const ff = document.getElementById('feverFill');
+    if (ff) ff.style.width = (feverT > 0 ? (feverT / 5 * 100) : feverGauge) + '%';
     const g = ctx.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0, '#070b16'); g.addColorStop(0.7, '#0c1430'); g.addColorStop(1, '#101c3f');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
