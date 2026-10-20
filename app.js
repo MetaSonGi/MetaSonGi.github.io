@@ -241,6 +241,15 @@
       tags: ['AI', '아트'],
       hue: ['#0e2a3a', '#1a4a6e'],
     },
+    {"emoji":"🏭","title":"멀티 공장 디지털트윈 월드","url":"https://metasongi.github.io/automotive-factory-twin-world/","desc":"자동차·배터리·반도체·물류 4개 공장 — 공정 흐름, 로봇팔·AMR, 고장 시나리오와 KPI 시뮬레이션.","tags":["디지털트윈","3D"],"hue":["#0e2a5e","#123a7a"]},
+    {"emoji":"🤖","title":"효기 Robot Lab","url":"https://metasongi.github.io/robot-lab/","desc":"로봇 4종 미션·관절·통신 실습 — 웹에서 녹화 데모 재생, Python 서버 연결 시 MuJoCo 물리 시뮬레이션 조작.","tags":["3D","교육"],"hue":["#0e3a4a","#155a70"]},
+    {"emoji":"🏠","title":"3D 룸 데코레이터","url":"https://metasongi.github.io/room-decorator-3d/","desc":"이미지로 벽·바닥 꾸미기, 가구 배치와 동선 설계 — 워크스루·사람 흐름 시뮬레이션, PNG 저장.","tags":["3D","아트"],"hue":["#4a2a08","#7a4a10"]},
+    {"emoji":"📚","title":"스마트팩토리 자격증 강의","url":"https://metasongi.github.io/smartfactory-cert-lecture/","desc":"자동화·공유압·스마트공장 학습 자료와 퀴즈, 진도 관리 — 로그인 없이 공압·PLC 래더 시뮬레이터 체험.","tags":["교육","디지털트윈"],"hue":["#0e3a2a","#1a5a3a"]},
+    {"emoji":"🔍","title":"AI 에이전트 도구 실행 감사기","url":"https://metasongi.github.io/agent-tool-trace-auditor/","desc":"도구 실행 기록의 승인·상태·근거 정책 점검 — 프로젝트 설명과 예제 리포트 제공, 분석 실행은 Python.","tags":["AI","분석"],"hue":["#3a1060","#5b1a8a"]},
+    {"emoji":"🔗","title":"트윈 의존성 영향 분석기","url":"https://metasongi.github.io/digital-twin-dependency-analyzer/","desc":"장비·센서·서비스 장애의 영향 범위와 순환 참조 분석 — 프로젝트 설명·예제 리포트, 분석 실행은 Python.","tags":["디지털트윈","분석"],"hue":["#0e2a3a","#1a4a5a"]},
+    {"emoji":"🗓️","title":"설비 정비 일정 조정기","url":"https://metasongi.github.io/maintenance-window-scheduler/","desc":"작업 순서·기술자 스킬·금지 시간·공용 작업장 제약을 반영한 정비 일정 — 예제 제공, 일정 생성은 Python.","tags":["생산성","분석"],"hue":["#2a0e4a","#4a1a7a"]},
+    {"emoji":"🔌","title":"OPC UA NodeId 이식성 검사기","url":"https://metasongi.github.io/opcua-nodeid-portability-checker/","desc":"네임스페이스·NodeId 설정의 이식성, 중복과 잘못된 표준 사용 점검 — 예제 리포트, 검사 실행은 Python.","tags":["디지털트윈","데이터"],"hue":["#0e2a4a","#1a3a6a"]},
+    {"emoji":"📈","title":"센서 데이터 품질 감사기","url":"https://metasongi.github.io/sensor-quality-auditor/","desc":"센서 데이터의 시간 역행·중복·결측·고정값·급격한 변화 점검 — 프로젝트 설명·예제 리포트, 분석 실행은 Python.","tags":["데이터","분석"],"hue":["#3a0e2a","#5a1a40"]},
   ];
 
   const ALL = '전체';
