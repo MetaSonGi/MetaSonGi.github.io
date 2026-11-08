@@ -4,14 +4,16 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>성남 AI 랩 — MetaSonGi</title>
-<meta name="description" content="스마트공장 · 디지털트윈 · 제조 AI 개발자 포트폴리오 — 43개 프로젝트의 웹 데모와 개발 도구" />
-<link rel="stylesheet" href="style.css" />
+<meta name="description" content="스마트공장 · 디지털트윈 · 제조 AI 개발자 포트폴리오 — 49개 프로젝트의 웹 데모와 개발 도구" />
+<link rel="stylesheet" href="style.css?v=20261109" />
+<link rel="stylesheet" href="motion.css?v=20261109" />
 </head>
 <body>
 
 <nav class="nav">
   <a href="#top" class="logo"><span class="logo-mark">◈</span> 성남 AI 랩 <span class="logo-sub">MetaSonGi</span></a>
   <div class="nav-links">
+    <a href="#new">NEW</a>
     <a href="#projects">프로젝트</a>
     <a href="#about">소개</a>
     <a href="https://github.com/MetaSonGi" target="_blank" rel="noopener">GitHub ↗</a>
@@ -23,14 +25,14 @@
   <div class="hero-inner">
     <p class="kicker">PORTFOLIO · AI DEVELOPER</p>
     <h1>아이디어를 링크로<br /><span class="grad">바꾸는 개발자</span></h1>
-    <p class="hero-sub">스마트공장 · 디지털트윈 · 제조 AI —<br />43개 프로젝트의 웹 데모와 개발 도구를 만나보세요</p>
+    <p class="hero-sub">스마트공장 · 디지털트윈 · 제조 AI —<br />49개 프로젝트의 웹 데모와 개발 도구를 만나보세요</p>
     <div class="hero-cta">
       <a href="#projects" class="btn primary">프로젝트 보기 ↓</a>
       <a href="https://github.com/MetaSonGi" target="_blank" rel="noopener" class="btn">GitHub ↗</a>
     </div>
     <div class="stats">
-      <div class="stat"><span class="stat-num" data-count="43">0</span><span class="stat-label">웹 프로젝트</span></div>
-      <div class="stat"><span class="stat-num" data-count="87">0</span><span class="stat-label">GitHub 저장소</span></div>
+      <div class="stat"><span class="stat-num" data-count="49">0</span><span class="stat-label">웹 프로젝트</span></div>
+      <div class="stat"><span class="stat-num" data-count="117">0</span><span class="stat-label">GitHub 저장소</span></div>
       <div class="stat"><span class="stat-num" data-count="9">0</span><span class="stat-label">프로젝트 분야</span></div>
     </div>
     <p class="game-hint">👆 배너를 눌러보세요 · 코인 🪙+10 · 로봇 🤖+5 · 칩 🔧+3 · 연타하면 🔥FEVER · <span id="clickScore">0</span>점 · 최고 <span id="bestScore">0</span>점</p>
@@ -46,6 +48,24 @@
 </div>
 
 <main>
+
+<section id="new" class="spotlight" aria-label="새로 공개한 프로젝트">
+  <div class="spot-orb a"></div><div class="spot-orb b"></div>
+  <div class="section-head">
+    <h2>새로 공개한 프로젝트</h2>
+    <p>드래그하거나 화살표로 돌려 보세요. 정면 카드를 누르면 바로 실행됩니다.</p>
+  </div>
+  <div id="stage" class="stage" tabindex="0" aria-roledescription="회전 쇼케이스">
+    <div class="ring-floor"></div>
+    <div class="ring"></div>
+  </div>
+  <div id="spotCaption" class="spot-caption" aria-live="polite"></div>
+  <div class="spot-ctrl">
+    <button id="spotPrev" aria-label="이전 프로젝트">←</button>
+    <a id="spotOpen" class="btn primary" href="#" target="_blank" rel="noopener">실행하기 ↗</a>
+    <button id="spotNext" aria-label="다음 프로젝트">→</button>
+  </div>
+</section>
   <section id="projects" class="section">
     <div class="section-head">
       <h2>프로젝트 갤러리</h2>
@@ -77,6 +97,7 @@
   <p class="muted">웹 데모 · 시뮬레이션 · 개발 도구 · <a href="https://github.com/MetaSonGi">github.com/MetaSonGi</a></p>
 </footer>
 
-<script src="app.js?v=20261020-43"></script>
+<script src="app.js?v=20261109-49"></script>
+<script src="motion.js?v=20261109"></script>
 </body>
 </html>

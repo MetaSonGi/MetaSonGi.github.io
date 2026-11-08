@@ -1,0 +1,130 @@
+/* 성남 AI 랩 — 모션 레이어 (스크롤 진행·커서 오라·카드 3D 틸트·공개 순서 등장·NEW 3D 회전 쇼케이스) */
+
+/* ---------- 스크롤 진행 바 ---------- */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 60;
+  transform-origin: 0 50%; transform: scaleX(0);
+  background: linear-gradient(90deg, var(--neon), var(--accent), var(--violet), #ff7ab8);
+  box-shadow: 0 0 12px rgba(0, 229, 160, 0.6);
+  pointer-events: none;
+}
+
+/* ---------- 커서 오라 (마우스 환경만) ---------- */
+.cursor-aura {
+  position: fixed; left: 0; top: 0; width: 520px; height: 520px; margin: -260px 0 0 -260px;
+  border-radius: 50%; pointer-events: none; z-index: 1;
+  background: radial-gradient(circle, rgba(79, 124, 255, 0.16), rgba(160, 107, 255, 0.08) 38%, transparent 68%);
+  mix-blend-mode: screen; opacity: 0; transition: opacity 0.4s;
+}
+.cursor-aura.on { opacity: 1; }
+.cursor-dot {
+  position: fixed; left: 0; top: 0; width: 8px; height: 8px; margin: -4px 0 0 -4px; z-index: 70;
+  border-radius: 50%; background: var(--neon); pointer-events: none; opacity: 0;
+  box-shadow: 0 0 10px var(--neon); transition: opacity 0.3s, width 0.2s, height 0.2s, margin 0.2s;
+}
+.cursor-dot.on { opacity: 1; }
+.cursor-dot.hover { width: 34px; height: 34px; margin: -17px 0 0 -17px; background: rgba(0, 229, 160, 0.12); border: 1px solid var(--neon); }
+
+/* ---------- 헤드라인 글자 스크램블 ---------- */
+.scramble-glyph { color: var(--neon); opacity: 0.75; }
+
+/* ---------- 섹션 제목 글자 순차 등장 ---------- */
+.split-ch { display: inline-block; opacity: 0; transform: translateY(0.6em) rotate(6deg); filter: blur(6px);
+  transition: opacity 0.5s, transform 0.6s cubic-bezier(.2,.9,.2,1.2), filter 0.5s; transition-delay: calc(var(--i) * 28ms); }
+.split-in .split-ch { opacity: 1; transform: none; filter: none; }
+
+/* ---------- 카드 등장 + 3D 틸트 + 글레어 ---------- */
+.card.reveal { opacity: 0; transform: translateY(40px) scale(0.96) rotateX(8deg); filter: blur(4px); }
+.card.reveal.in {
+  opacity: 1; filter: none;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--lift, 0px)) scale(var(--sc, 1));
+  transition: opacity 0.7s var(--d, 0s), filter 0.7s var(--d, 0s), transform 0.7s cubic-bezier(.2,.8,.2,1) var(--d, 0s), border-color 0.2s, box-shadow 0.2s;
+}
+.card.reveal.in.tilting { transition: transform 0.08s linear, border-color 0.2s, box-shadow 0.2s; }
+.card.reveal.in:hover { --lift: -6px; --sc: 1.015; }
+.card::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 3;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.13), transparent 45%);
+  opacity: 0; transition: opacity 0.3s;
+}
+.card:hover::after { opacity: 1; }
+.card::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none; z-index: 4;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), var(--neon), var(--accent) 40%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity 0.3s;
+}
+.card:hover::before { opacity: 1; }
+.card .card-emoji { transition: transform 0.3s; }
+.card:hover .card-emoji { transform: translateZ(30px) scale(1.15) rotate(-6deg); }
+.new-badge {
+  position: absolute; top: 12px; left: 12px; z-index: 2;
+  font-size: 11px; font-weight: 900; letter-spacing: 0.12em; padding: 4px 9px; border-radius: 999px;
+  color: #04120c; background: linear-gradient(90deg, var(--neon), #7dffd0, var(--neon)); background-size: 200% 100%;
+  animation: badgeflow 2.2s linear infinite; box-shadow: 0 0 14px rgba(0, 229, 160, 0.7);
+}
+@keyframes badgeflow { to { background-position: 200% 0; } }
+.card.is-new { border-color: rgba(0, 229, 160, 0.45); }
+
+/* ---------- 자석 버튼 ---------- */
+.btn.magnetic { transition: transform 0.25s cubic-bezier(.2,.8,.2,1), border-color 0.15s; will-change: transform; }
+
+/* ---------- NEW 3D 회전 쇼케이스 ---------- */
+.spotlight { position: relative; overflow: hidden; padding: 90px 0 40px; }
+.spotlight .section-head { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+.spot-orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.5; pointer-events: none; }
+.spot-orb.a { width: 420px; height: 420px; left: -120px; top: 40px; background: #3b2bff; animation: orb 14s ease-in-out infinite alternate; }
+.spot-orb.b { width: 360px; height: 360px; right: -100px; bottom: -60px; background: #00b383; animation: orb 18s ease-in-out infinite alternate-reverse; }
+@keyframes orb { to { transform: translate(120px, -60px) scale(1.2); } }
+.stage { position: relative; height: 420px; perspective: 1400px; cursor: grab; touch-action: pan-y; user-select: none; margin-top: 10px; }
+.stage.dragging { cursor: grabbing; }
+.ring { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; }
+.ring-item {
+  position: absolute; width: 300px; height: 210px; left: -150px; top: -105px;
+  border-radius: 18px; overflow: hidden; text-decoration: none; color: var(--text);
+  background: var(--panel); border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.ring-item img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.ring-item .ri-label {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 14px 12px; font-weight: 800; font-size: 15px;
+  background: linear-gradient(transparent, rgba(4, 7, 16, 0.92));
+}
+.ring-item .ri-label span { margin-right: 6px; }
+.ring-item.front { border-color: var(--neon); box-shadow: 0 0 0 1px var(--neon), 0 0 40px rgba(0, 229, 160, 0.45), 0 30px 60px rgba(0, 0, 0, 0.5); }
+.ring-item:focus-visible { outline: 3px solid #ffd166; outline-offset: 3px; }
+.ring-floor {
+  position: absolute; left: 50%; top: 50%; width: 900px; height: 900px; margin: -450px 0 0 -450px;
+  transform: translateY(150px) rotateX(90deg); border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(0, 229, 160, 0.22), rgba(79, 124, 255, 0.08) 40%, transparent 65%);
+}
+.spot-caption { text-align: center; max-width: 620px; margin: 6px auto 0; padding: 0 20px; min-height: 92px; }
+.spot-caption h3 { margin: 0 0 6px; font-size: 22px; }
+.spot-caption p { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.7; }
+.spot-caption.swap { animation: capin 0.45s ease; }
+@keyframes capin { from { opacity: 0; transform: translateY(8px); } }
+.spot-ctrl { display: flex; justify-content: center; gap: 12px; margin-top: 16px; }
+.spot-ctrl button {
+  width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--border); background: var(--panel);
+  color: var(--text); font-size: 18px; cursor: pointer; transition: border-color 0.2s, transform 0.2s;
+}
+.spot-ctrl button:hover { border-color: var(--neon); transform: scale(1.08); }
+.spot-ctrl a.btn { padding: 11px 22px; }
+
+@media (max-width: 640px) {
+  .nav { padding: 12px 16px; }
+  .logo-sub { display: none; }
+  .nav-links { gap: 12px; }
+  .nav-links a { font-size: 13px; white-space: nowrap; }
+  .stage { height: 330px; }
+  .ring-item { width: 220px; height: 154px; left: -110px; top: -77px; }
+  .ring-item .ri-label { font-size: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card.reveal, .split-ch { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
+  .new-badge, .spot-orb { animation: none; }
+  .cursor-aura, .cursor-dot { display: none; }
+}

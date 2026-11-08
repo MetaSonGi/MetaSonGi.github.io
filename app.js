@@ -250,15 +250,23 @@
     {"emoji":"🗓️","title":"설비 정비 일정 조정기","url":"https://metasongi.github.io/maintenance-window-scheduler/","desc":"작업 순서·기술자 스킬·금지 시간·공용 작업장 제약을 반영한 정비 일정 — 예제 제공, 일정 생성은 Python.","tags":["생산성","분석"],"hue":["#2a0e4a","#4a1a7a"]},
     {"emoji":"🔌","title":"OPC UA NodeId 이식성 검사기","url":"https://metasongi.github.io/opcua-nodeid-portability-checker/","desc":"네임스페이스·NodeId 설정의 이식성, 중복과 잘못된 표준 사용 점검 — 예제 리포트, 검사 실행은 Python.","tags":["디지털트윈","데이터"],"hue":["#0e2a4a","#1a3a6a"]},
     {"emoji":"📈","title":"센서 데이터 품질 감사기","url":"https://metasongi.github.io/sensor-quality-auditor/","desc":"센서 데이터의 시간 역행·중복·결측·고정값·급격한 변화 점검 — 프로젝트 설명·예제 리포트, 분석 실행은 Python.","tags":["데이터","분석"],"hue":["#3a0e2a","#5a1a40"]},
+    {"emoji":"🥽","title":"CardBord VR 체험","url":"https://metasongi.github.io/CardBord/","desc":"폰 카드보드·PC·VR 헤드셋에서 바로 여는 웹 VR — 우주·숲·스마트 팩토리 3개 장면, 바라보기만 해도 이동·설명.","tags":["3D","교육"],"hue":["#1a0e4a","#2e1a7a"],"isNew":true},
+    {"emoji":"📝","title":"메모장","url":"https://metasongi.github.io/notepad/","desc":"자동 저장·여러 단어 검색·고정·.txt 저장·JSON 백업 — 서버 없이 브라우저에만 저장되는 가벼운 메모장.","tags":["생산성"],"hue":["#0e2a3a","#1a4a5a"],"isNew":true},
+    {"emoji":"🎓","title":"AI 자격증 로드맵","url":"https://metasongi.github.io/ai-certification-roadmap/","desc":"AWS·Azure·Google 등 AI 자격증과 무료 교육 비교, 내 로드맵 추가와 학습 진행률 관리.","tags":["교육","AI"],"hue":["#0e3a2a","#1a5a3a"],"isNew":true},
+    {"emoji":"⚖️","title":"공공·법률 워크벤치","url":"https://metasongi.github.io/korean-public-workbench/","desc":"법령·소송·개인정보 등 9개 분야 공식 자료 바로가기, 준비 체크리스트, 주민번호 자동 가림 문서 초안.","tags":["생산성","데이터"],"hue":["#3a2a0e","#5a401a"],"isNew":true},
+    {"emoji":"📦","title":"오픈소스 아이디어 선반","url":"https://metasongi.github.io/oss-shelf/","desc":"다음에 만들 오픈소스 10개 — 기능·라이선스·별점 비교와 확인 체크, 개인 메모 내보내기.","tags":["생산성","AI"],"hue":["#2a3a0e","#40581a"],"isNew":true},
+    {"emoji":"🧰","title":"효기 도구 작업실","url":"https://metasongi.github.io/tool-catalog-workspace/","desc":"AI 도구 62개 검색·프로젝트별 적용 매핑·메모·작업 보드·JSON 백업 — 수집한 도구를 실행 계획으로.","tags":["AI","생산성"],"hue":["#0e1a3a","#1a2e5e"],"isNew":true},
   ];
 
+  window.HUB_PROJECTS = PROJECTS;
   const ALL = '전체';
   const TAG_IMG = {
     '게임': 'game.jpg', '3D': '3d.jpg', 'AI': 'ai.jpg',
     '디지털트윈': 'twin.jpg', '교육': 'edu.jpg', '아트': 'art.jpg',
     '생산성': 'productivity.jpg', '분석': 'analytics.jpg', '데이터': 'data.jpg',
   };
-  const filters = [ALL, ...new Set(PROJECTS.flatMap((p) => p.tags))];
+  const NEW = 'NEW';
+  const filters = [ALL, NEW, ...new Set(PROJECTS.flatMap((p) => p.tags))];
   const filtersEl = document.getElementById('filters');
   const galleryEl = document.getElementById('gallery');
   let active = ALL;
@@ -271,18 +279,18 @@
   }
 
   function renderGallery() {
-    const list = PROJECTS.filter((p) => active === ALL || p.tags.includes(active));
+    const list = PROJECTS.filter((p) => active === ALL || (active === NEW ? p.isNew : p.tags.includes(active)));
     galleryEl.innerHTML = list.map((p) => {
       const slug = p.url.split('/').filter(Boolean).pop();
       const img = 'img/' + slug + '.jpg';
       const fallback = 'img/' + (TAG_IMG[p.tags[0]] || 'ai.jpg');
       return `
-      <a class="card" href="${p.url}" target="_blank" rel="noopener">
+      <a class="card${p.isNew ? ' is-new' : ''}" href="${p.url}" target="_blank" rel="noopener">
         <div class="card-art">
           <img src="${img}" alt="${p.title}" loading="lazy" onerror="this.onerror=null;this.src='${fallback}'" />
           <div class="card-shade"></div>
           <span class="card-emoji">${p.emoji}</span>
-          <span class="ext">↗</span>
+          <span class="ext">↗</span>${p.isNew ? '<span class="new-badge">NEW</span>' : ''}
         </div>
         <div class="card-body">
           <h3>${p.title}</h3>
