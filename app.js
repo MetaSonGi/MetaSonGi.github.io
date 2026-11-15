@@ -256,6 +256,7 @@
     {"emoji":"⚖️","title":"공공·법률 워크벤치","url":"https://metasongi.github.io/korean-public-workbench/","desc":"법령·소송·개인정보 등 9개 분야 공식 자료 바로가기, 준비 체크리스트, 주민번호 자동 가림 문서 초안.","tags":["생산성","데이터"],"hue":["#3a2a0e","#5a401a"],"isNew":true},
     {"emoji":"📦","title":"오픈소스 아이디어 선반","url":"https://metasongi.github.io/oss-shelf/","desc":"다음에 만들 오픈소스 10개 — 기능·라이선스·별점 비교와 확인 체크, 개인 메모 내보내기.","tags":["생산성","AI"],"hue":["#2a3a0e","#40581a"],"isNew":true},
     {"emoji":"🧰","title":"효기 도구 작업실","url":"https://metasongi.github.io/tool-catalog-workspace/","desc":"AI 도구 62개 검색·프로젝트별 적용 매핑·메모·작업 보드·JSON 백업 — 수집한 도구를 실행 계획으로.","tags":["AI","생산성"],"hue":["#0e1a3a","#1a2e5e"],"isNew":true},
+    {"emoji":"🔌","title":"가상 논리회로 실험실","url":"https://metasongi.github.io/virtual-logic-labs/","desc":"브레드보드에 AND·OR·XOR·MUX 칩을 꽂고 배선해 LED로 확인하는 디지털 논리 실습 — Unity 6 WebGL, 학생 계정 student/student.","tags":["교육","3D"],"hue":["#3a240e","#5a3a1a"],"isNew":true},
   ];
 
   window.HUB_PROJECTS = PROJECTS;
