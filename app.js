@@ -256,7 +256,7 @@
     {"emoji":"⚖️","title":"공공·법률 워크벤치","url":"https://metasongi.github.io/korean-public-workbench/","desc":"법령·소송·개인정보 등 9개 분야 공식 자료 바로가기, 준비 체크리스트, 주민번호 자동 가림 문서 초안.","tags":["생산성","데이터"],"hue":["#3a2a0e","#5a401a"],"isNew":true},
     {"emoji":"📦","title":"오픈소스 아이디어 선반","url":"https://metasongi.github.io/oss-shelf/","desc":"다음에 만들 오픈소스 10개 — 기능·라이선스·별점 비교와 확인 체크, 개인 메모 내보내기.","tags":["생산성","AI"],"hue":["#2a3a0e","#40581a"],"isNew":true},
     {"emoji":"🧰","title":"효기 도구 작업실","url":"https://metasongi.github.io/tool-catalog-workspace/","desc":"AI 도구 62개 검색·프로젝트별 적용 매핑·메모·작업 보드·JSON 백업 — 수집한 도구를 실행 계획으로.","tags":["AI","생산성"],"hue":["#0e1a3a","#1a2e5e"],"isNew":true},
-    {"emoji":"🔌","title":"가상 논리회로 실험실","url":"https://metasongi.github.io/virtual-logic-labs/","desc":"브레드보드에 AND·OR·XOR·MUX 칩을 꽂고 배선해 LED로 확인하는 디지털 논리 실습 — Unity 6 WebGL, 학생 계정 student/student.","tags":["교육","3D"],"hue":["#3a240e","#5a3a1a"],"isNew":true},
+    {"emoji":"🔌","title":"가상 논리회로 실험실","url":"https://metasongi.github.io/virtual-logic-labs/","desc":"3D 보드에서 논리 회로와 공압·유압 회로를 잇고 전원을 켜 보는 실험 11개 — 솔레노이드 밸브·실린더·센서·자동 채점, 로그인 없음 (Unity 6 WebGL).","tags":["교육","3D"],"hue":["#3a240e","#5a3a1a"],"isNew":true},
     {"emoji":"⚡","title":"3D 논리회로 랩","url":"https://metasongi.github.io/circuit-lab-3d/","desc":"3D 브레드보드에 게이트를 놓고 전선을 이으면 빛 신호가 흐르는 논리회로 실험실 — 미션 8개, 진리표 자동 채점, 휴대폰 지원.","tags":["교육","3D"],"hue":["#06302a","#0e4a40"],"isNew":true},
   ];
 
