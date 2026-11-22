@@ -738,6 +738,7 @@ function openExport(){
   const claude=ENV.mode==='claude'&&ENV.mcp;
   $('#expNotion').style.display=claude?'':'none';
   $('#expOpen').style.display=claude?'none':'';
+  $('#expDl').style.display=window.claude?'none':'';
   $('#expSub').textContent=claude?'최종 보고와 팀원 결과물을 노션 페이지 하나로 정리해요.':'GitHub 사이트에서는 노션에 바로 저장할 수 없어요. 마크다운을 복사해 노션에 붙여 넣거나, Claude 앱에서 열어 저장하세요.';
   $('#expNote').textContent='';openSheet('#expBg');
 }
