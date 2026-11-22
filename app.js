@@ -258,6 +258,7 @@
     {"emoji":"🧰","title":"효기 도구 작업실","url":"https://metasongi.github.io/tool-catalog-workspace/","desc":"AI 도구 62개 검색·프로젝트별 적용 매핑·메모·작업 보드·JSON 백업 — 수집한 도구를 실행 계획으로.","tags":["AI","생산성"],"hue":["#0e1a3a","#1a2e5e"],"isNew":true},
     {"emoji":"🔌","title":"가상 논리회로 실험실","url":"https://metasongi.github.io/virtual-logic-labs/","desc":"3D 보드에서 논리 회로와 공압·유압 회로를 잇고 전원을 켜 보는 실험 11개 — 솔레노이드 밸브·실린더·센서·자동 채점, 로그인 없음 (Unity 6 WebGL).","tags":["교육","3D"],"hue":["#3a240e","#5a3a1a"],"isNew":true},
     {"emoji":"⚡","title":"3D 논리회로 랩","url":"https://metasongi.github.io/circuit-lab-3d/","desc":"3D 브레드보드에 게이트를 놓고 전선을 이으면 빛 신호가 흐르는 논리회로 실험실 — 미션 8개, 진리표 자동 채점, 휴대폰 지원.","tags":["교육","3D"],"hue":["#06302a","#0e4a40"],"isNew":true},
+    {"emoji":"🍄","title":"MetaSonGi AI 오피스","url":"https://metasongi.github.io/ai-office/","desc":"주제만 던지면 송이 팀장과 AI 직원 8명(기획·리서치·디자인·개발·QA·마케팅·영업)이 회의하고 나눠서 실제 결과물을 만드는 가상 회사 — 노션 저장.","tags":["AI","생산성"],"hue":["#3a1e0e","#5a321a"],"isNew":true},
   ];
 
   window.HUB_PROJECTS = PROJECTS;

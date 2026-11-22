@@ -26,6 +26,7 @@ GitHub 사용자 사이트(`MetaSonGi.github.io`) 루트에 배포됩니다.
 | AI 미디어아트 생성기 | https://metasongi.github.io/ai-media-art-generator/ |
 | 디지털트윈 미니 시뮬레이터 | https://metasongi.github.io/digital-twin-mini-sim/ |
 | … (갤러리 전체 51개는 `app.js`의 `PROJECTS`) | |
+| 🆕 MetaSonGi AI 오피스 | https://metasongi.github.io/ai-office/ |
 | 🆕 CardBord VR 체험 | https://metasongi.github.io/CardBord/ |
 | 🆕 메모장 | https://metasongi.github.io/notepad/ |
 | 🆕 AI 자격증 로드맵 | https://metasongi.github.io/ai-certification-roadmap/ |

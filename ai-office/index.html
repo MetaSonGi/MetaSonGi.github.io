@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MetaSonGi AI 오피스</title>
+<meta name="description" content="주제만 던지면 AI 직원 8명이 회의하고, 나눠서 일하고, 결과물을 만들어 주는 가상 오피스">
+<meta name="theme-color" content="#FFF4E6">
+<link rel="icon" href="logo-192.png">
+<link rel="apple-touch-icon" href="logo-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta property="og:title" content="MetaSonGi AI 오피스">
+<meta property="og:description" content="주제만 던지면 AI 직원 8명이 일하는 가상 회사">
+<meta property="og:image" content="logo-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FFF7EC; --cream2:#FFEFDC; --card:#FFFFFF; --line:#F1DFCB; --line2:#E7CFB4;
+  --brown:#4A2E22; --brown2:#7A5544; --muted:#A08473;
+  --orange:#F0884A; --orange2:#E06F2E; --peach:#FFD9BF; --yellow:#FFC857; --mint:#6CCB9F; --red:#E5604F;
+  --shadow:0 10px 30px -12px rgba(122,75,40,.28), 0 2px 6px rgba(122,75,40,.06);
+  --r:22px; --disp:Jua,"Noto Sans KR",system-ui,sans-serif; --body:"Noto Sans KR",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--cream);color:var(--brown);font-family:"Noto Sans KR",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body{background:
+  radial-gradient(circle at 12% -10%, #FFE2C8 0, transparent 38%),
+  radial-gradient(circle at 105% 20%, #FFE9D6 0, transparent 30%),
+  radial-gradient(#F3E1CC 1.2px, transparent 1.3px) 0 0/22px 22px, var(--cream);min-height:100vh}
+button,input,textarea,select{font-family:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--orange2)}
+.wrap{max-width:1200px;margin:0 auto;padding:14px 14px 60px}
+
+/* header */
+.top{display:flex;align-items:center;gap:12px;padding:6px 4px 14px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--brown)}
+.logo img{width:48px;height:48px;border-radius:50%;box-shadow:0 0 0 3px #fff,0 6px 16px -6px rgba(200,110,50,.6);background:#fff}
+.logo .wm{font-family:var(--disp);font-size:26px;line-height:1;letter-spacing:-.3px}
+.logo .wm b{color:var(--orange);font-weight:400}
+.logo .sub{display:block;font-family:var(--body);font-size:10.5px;font-weight:900;letter-spacing:2.4px;color:var(--muted);margin-top:4px}
+.top .sp{flex:1}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:7px 11px;border-radius:99px;background:#fff;border:1.5px solid var(--line);white-space:nowrap}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.pill.live i{background:var(--mint);box-shadow:0 0 0 3px #d7f3e6}
+.pill.api i{background:var(--yellow);box-shadow:0 0 0 3px #fff0c9}
+.iconbtn{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;font-size:18px}
+
+.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:2px 4px 14px;flex-wrap:wrap}
+.hero h1{font-family:var(--disp);font-weight:400;font-size:clamp(26px,5.4vw,40px);line-height:1.15;margin:0;letter-spacing:-.5px}
+.hero h1 em{font-style:normal;color:var(--orange);position:relative}
+.hero h1 em::after{content:"";position:absolute;left:-2px;right:-2px;bottom:2px;height:10px;background:var(--peach);z-index:-1;border-radius:6px}
+.hero p{margin:6px 0 0;color:var(--brown2);font-size:14px}
+
+.grid{display:grid;gap:16px}
+@media(min-width:980px){.grid{grid-template-columns:1.1fr .9fr;align-items:start}.stick{position:sticky;top:12px}}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:14px}
+.col{display:grid;gap:16px}
+
+/* ===== office ===== */
+.office-card{padding:10px}
+.office{position:relative;width:100%;aspect-ratio:480/460;border-radius:16px;overflow:hidden;user-select:none;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.0) 0 46px, rgba(160,110,70,.10) 46px 48px),
+    repeating-linear-gradient(0deg, transparent 0 15px, rgba(160,110,70,.06) 15px 16px),
+    linear-gradient(#F6D9B4,#EFCB9E);}
+.wall{position:absolute;left:0;right:0;top:0;height:10.5%;background:linear-gradient(#FFF3E3,#FBE3C6);border-bottom:4px solid #E3C29B}
+.win{position:absolute;top:1.7%;height:6.4%;width:14%;border-radius:10px 10px 4px 4px;background:linear-gradient(160deg,#BFE6FF,#E8F6FF 60%,#FFFFFF);border:3px solid #fff;box-shadow:0 2px 0 #E3C29B}
+.win::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:3px;background:#fff}
+.sign{position:absolute;left:50%;top:1.6%;transform:translateX(-50%);background:var(--brown);color:#FFE7CF;font-family:var(--disp);font-size:clamp(9px,2.2vw,13px);padding:3px 12px;border-radius:99px;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.sign img{width:1.4em;height:1.4em;border-radius:50%}
+.o{position:absolute;transform:translate(-50%,-50%)}
+.rug{position:absolute;left:50%;top:61%;width:58%;height:40%;transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(#FFF6EA 0 58%, #FFE4CA 58% 64%, #FFF6EA 64% 100%);border:3px dashed #F2C9A2;opacity:.95}
+/* mushroom table */
+.mtable{width:26%;aspect-ratio:1.5;}
+.mtable .cap{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 40% 35%,#FFA56B,#E9773A 70%);box-shadow:0 6px 0 #C85E25, 0 14px 18px -8px rgba(120,60,20,.45)}
+.mtable .dot{position:absolute;background:#FFF5E8;border-radius:50%}
+.rl{position:absolute;transform:translate(-50%,-50%);font-family:var(--disp);font-size:clamp(8px,2vw,11px);color:#B9835D;white-space:nowrap;background:rgba(255,246,234,.85);padding:1px 8px;border-radius:99px}
+.desk{width:19%;height:9.5%}
+.desk .top{position:absolute;inset:0;border-radius:10px;background:linear-gradient(#FFFDF8,#F6E7D2);border:2.5px solid #D9B48C;box-shadow:0 4px 0 #C99E73}
+.desk .mon{position:absolute;left:50%;top:-52%;width:50%;height:78%;transform:translateX(-50%);background:#5A4236;border:2.5px solid #47332A;border-radius:7px;overflow:hidden}
+.desk .scr{position:absolute;inset:2px;border-radius:4px;background:#8E7364;transition:.3s}
+.desk.on .scr{background:var(--c);box-shadow:inset 0 0 0 99px rgba(255,255,255,.12)}
+.desk .lines{position:absolute;inset:4px 5px;display:none;flex-direction:column;gap:2px}
+.desk.on .lines{display:flex}
+.desk .lines i{display:block;height:2px;background:#fff;border-radius:2px;animation:type 1s infinite steps(6)}
+.desk .lines i:nth-child(2){animation-delay:.25s}.desk .lines i:nth-child(3){animation-delay:.5s}
+@keyframes type{0%{width:10%}100%{width:95%}}
+.desk .mug{position:absolute;right:8%;top:18%;width:11%;aspect-ratio:1;border-radius:3px 3px 5px 5px;background:var(--c);opacity:.9}
+.desk .tag{display:none;position:absolute;left:50%;bottom:-62%;transform:translateX(-50%);font-family:var(--disp);font-size:clamp(8px,1.9vw,11px);color:#9C6E4E;white-space:nowrap}
+.plant{width:6.5%;aspect-ratio:1}
+.plant::before{content:"";position:absolute;left:18%;right:18%;bottom:0;height:42%;background:#D98A5A;border-radius:3px 3px 8px 8px}
+.plant::after{content:"";position:absolute;left:0;right:0;top:0;height:70%;border-radius:50%;background:radial-gradient(circle at 40% 35%,#9BE3B3,#4FB477)}
+.coffee{width:7%;height:8%;border-radius:8px;background:linear-gradient(#8A6A58,#5E463A);border:2px solid #47332A}
+.coffee::after{content:"";position:absolute;left:28%;bottom:10%;width:44%;height:32%;background:#fff;border-radius:0 0 6px 6px}
+.shelf{width:15%;height:4.5%;background:#C99E73;border-radius:4px;box-shadow:inset 0 -3px 0 #B0855C}
+.shelf i{position:absolute;bottom:100%;width:12%;background:var(--c);border-radius:2px 2px 0 0}
+
+/* agents */
+.agent{position:absolute;width:8.4%;transform:translate(-50%,-90%);transition-property:left,top;transition-timing-function:linear;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.agent svg{width:100%;display:block;overflow:visible}
+.agent .flip{transition:transform .15s;transform-origin:center}
+.agent.left .flip{transform:scaleX(-1)}
+.agent.walking .bodywrap{animation:bob .3s infinite alternate}
+.agent.walking .legL{animation:legA .3s infinite alternate;transform-origin:50% 0;transform-box:fill-box}
+.agent.walking .legR{animation:legB .3s infinite alternate;transform-origin:50% 0;transform-box:fill-box}
+.agent.working .bodywrap{animation:bob .45s infinite alternate}
+@keyframes bob{to{transform:translateY(-1.6px)}}
+@keyframes legA{from{transform:rotate(20deg)}to{transform:rotate(-20deg)}}
+@keyframes legB{from{transform:rotate(-20deg)}to{transform:rotate(20deg)}}
+.agent .nm{position:absolute;left:50%;top:100%;transform:translate(-50%,3px);font-family:var(--disp);font-size:clamp(8px,1.9vw,11px);background:#fff;color:var(--brown);padding:1px 7px;border-radius:99px;white-space:nowrap;border:1.5px solid var(--c);box-shadow:0 2px 0 rgba(0,0,0,.06)}
+.agent.sel .nm{background:var(--c);color:#fff}
+.agent .doc{position:absolute;right:-32%;top:42%;width:42%;aspect-ratio:3/4;background:#fff;border:1.5px solid #C9A98C;border-radius:3px;display:none;transform:rotate(8deg)}
+.agent .doc::before{content:"";position:absolute;left:18%;right:18%;top:24%;height:1.5px;background:#C9A98C;box-shadow:0 3px 0 #C9A98C,0 6px 0 #C9A98C}
+.agent.carry .doc{display:block}
+.bubble{position:absolute;left:50%;bottom:106%;transform:translateX(-50%) scale(.6);opacity:0;transition:.18s cubic-bezier(.3,1.6,.5,1);background:#fff;color:var(--brown);font-size:clamp(8.5px,2vw,11px);font-weight:700;line-height:1.35;padding:5px 9px;border-radius:12px;white-space:nowrap;box-shadow:0 4px 10px -2px rgba(120,70,30,.3);pointer-events:none;z-index:9;border:1.5px solid var(--line)}
+.bubble::after{content:"";position:absolute;left:50%;top:100%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#fff}
+.bubble.show{opacity:1;transform:translateX(-50%) scale(1)}
+.zz{position:absolute;left:66%;top:-14%;font-family:var(--disp);font-size:12px;color:var(--c);display:none;animation:float 1s infinite}
+.agent.working .zz{display:block}
+@keyframes float{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-10px);opacity:0}}
+
+/* staff */
+.staff{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:10px}
+.chip{background:var(--cream);border:1.5px solid var(--line);border-radius:14px;padding:7px 8px;text-align:left;min-width:0;transition:.15s}
+.chip:active{transform:scale(.97)}
+.chip .n{font-family:var(--disp);font-size:14px;display:flex;align-items:center;gap:5px}
+.chip .n i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.chip .r{font-size:10.5px;color:var(--muted);font-weight:700}
+.chip .s{font-size:10.5px;margin-top:2px;color:var(--brown2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip.busy{border-color:var(--c);background:#fff}
+.chip.busy .s{color:var(--orange2);font-weight:700}
+
+/* order box */
+.order h2,.sec-h{font-family:var(--disp);font-weight:400;font-size:19px;margin:0 0 8px;display:flex;align-items:center;gap:8px}
+.order textarea{width:100%;min-height:84px;resize:vertical;background:var(--cream);border:2px solid var(--line);border-radius:16px;padding:12px;font-size:15px;outline:none;transition:.15s}
+.order textarea:focus{border-color:var(--orange);background:#fff}
+.ex{display:flex;gap:6px;flex-wrap:wrap;margin:9px 0}
+.ex button{background:#fff;border:1.5px dashed var(--line2);color:var(--brown2);font-size:12px;font-weight:500;border-radius:99px;padding:5px 10px}
+.row{display:flex;gap:8px}
+.btn{flex:1;border:0;border-radius:16px;padding:13px 14px;font-weight:900;font-size:15px;background:linear-gradient(180deg,#F69A5E,var(--orange2));color:#fff;box-shadow:0 5px 0 #C25A1F;transition:.1s}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #C25A1F}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.ghost{flex:none;background:#fff;color:var(--brown);border:2px solid var(--line);box-shadow:0 4px 0 var(--line)}
+.btn.mint{background:linear-gradient(180deg,#7FD8AE,#47B583);box-shadow:0 5px 0 #2F8E62}
+.prog{margin-top:12px;display:none}
+.prog.on{display:block}
+.track{display:flex;gap:5px}
+.track div{flex:1;height:7px;border-radius:9px;background:var(--cream2)}
+.track div.done{background:var(--mint)}.track div.cur{background:var(--orange);animation:pulse .9s infinite alternate}
+@keyframes pulse{to{opacity:.45}}
+.stepname{font-size:12.5px;color:var(--brown2);margin-top:7px;font-weight:500}
+.plan{margin-top:10px;display:grid;gap:6px}
+.plan .t{display:flex;gap:8px;align-items:flex-start;font-size:13px;background:var(--cream);border-radius:12px;padding:8px 10px;border:1.5px solid transparent}
+.plan .t.cur{border-color:var(--orange);background:#fff}
+.plan .t.done{opacity:.6}
+.plan .t b{font-family:var(--disp);font-weight:400;white-space:nowrap;color:var(--c)}
+.hint{font-size:12px;color:var(--muted);margin-top:8px}
+
+/* outputs */
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -2px 10px;padding:2px}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:none;background:var(--cream);border:1.5px solid var(--line);color:var(--brown2);border-radius:99px;padding:7px 12px;font-size:13px;font-weight:700;display:flex;gap:5px;align-items:center}
+.tabs button i{width:8px;height:8px;border-radius:50%;background:var(--c,var(--muted))}
+.tabs button.on{background:var(--brown);color:#fff;border-color:var(--brown)}
+.out-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.out-head .who{font-size:12.5px;color:var(--brown2);font-weight:500}
+.mini{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12.5px;font-weight:700}
+.mini.on{border-color:var(--orange);color:var(--orange2)}
+.mini.notion{background:var(--brown);color:#fff;border-color:var(--brown)}
+.doc-view{background:var(--cream);border:1.5px solid var(--line);border-radius:16px;padding:16px;min-height:260px;max-height:64vh;overflow:auto;font-size:14.5px;line-height:1.75;word-break:keep-all;overflow-wrap:anywhere}
+.doc-view h1,.doc-view h2,.doc-view h3{font-family:var(--disp);font-weight:400;line-height:1.35;margin:16px 0 6px}
+.doc-view h1{font-size:21px}.doc-view h2{font-size:18px;color:var(--orange2)}.doc-view h3{font-size:16px}
+.doc-view>:first-child{margin-top:0}
+.doc-view p{margin:6px 0}.doc-view ul,.doc-view ol{margin:4px 0;padding-left:22px}
+.doc-view li::marker{color:var(--orange)}
+.doc-view code{background:#FBE6D3;padding:1px 6px;border-radius:6px;font-size:13px}
+.doc-view pre{background:#3B2A22;color:#FCE9D8;border-radius:12px;padding:12px;overflow:auto;font-size:12px;line-height:1.55}
+.doc-view pre code{background:none;padding:0}
+.doc-view table{border-collapse:collapse;font-size:13px;margin:8px 0;background:#fff;border-radius:10px;overflow:hidden}
+.doc-view td{border:1px solid var(--line);padding:5px 8px}
+.doc-view tr:first-child td{background:#FFE8D4;font-weight:700}
+.doc-view blockquote{margin:8px 0;padding:6px 12px;border-left:4px solid var(--orange);background:#fff;border-radius:0 10px 10px 0}
+.empty{color:var(--muted);font-size:14px;text-align:center;padding:40px 10px}
+.empty img{width:86px;height:86px;border-radius:50%;opacity:.9;display:block;margin:0 auto 10px}
+.caret::after{content:"▍";color:var(--orange);animation:pulse .6s infinite alternate}
+.pal{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.sw{width:78px;border-radius:12px;overflow:hidden;border:1.5px solid var(--line);font-size:11px;background:#fff}
+.sw div{height:42px}.sw p{margin:0;padding:4px 7px}
+iframe.preview{width:100%;height:60vh;border:1.5px solid var(--line);border-radius:14px;background:#fff}
+.tool{display:inline-block;font-size:12px;background:#fff;border:1.5px solid var(--line);border-radius:99px;padding:2px 9px;margin:2px 0;color:var(--brown2)}
+
+.log{max-height:210px;overflow:auto;font-size:12.5px;display:flex;flex-direction:column;gap:5px}
+.log div{color:var(--brown2)}.log b{color:var(--brown)}
+.log time{font-variant-numeric:tabular-nums;color:var(--muted);margin-right:7px;font-size:11.5px}
+
+/* sheets */
+.sheet-bg{position:fixed;inset:0;background:rgba(74,46,34,.42);display:none;z-index:50;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.sheet-bg.open{display:flex}
+.sheet{width:100%;max-width:560px;background:#fff;border-radius:26px 26px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto;animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@media(min-width:700px){.sheet-bg{align-items:center}.sheet{border-radius:26px}}
+.sheet h3{margin:0 0 2px;font-family:var(--disp);font-weight:400;font-size:21px;display:flex;align-items:center;gap:8px}
+.sheet .sub{font-size:13px;color:var(--brown2);margin-bottom:12px}
+.sheet textarea,.sheet input,.sheet select{width:100%;background:var(--cream);border:2px solid var(--line);border-radius:14px;padding:11px;font-size:14.5px;outline:none}
+.sheet textarea{min-height:90px}
+.sheet label{display:block;font-size:12.5px;font-weight:700;margin:12px 0 5px}
+.sheet .note{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--c);display:grid;place-items:center;color:#fff;font-family:var(--disp);font-size:17px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,10px);background:var(--brown);color:#fff;padding:10px 16px;border-radius:99px;font-size:13.5px;font-weight:700;opacity:0;transition:.2s;z-index:60;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
+footer a{color:var(--brown2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="https://metasongi.github.io/" target="_blank" rel="noopener">
+      <img src="logo-192.png" alt="MetaSonGi">
+      <span><span class="wm">Meta<b>SonGi</b></span><span class="sub">AI OFFICE</span></span>
+    </a>
+    <div class="sp"></div>
+    <span class="pill" id="mode"><i></i><span>연결 확인 중</span></span>
+    <button class="iconbtn" id="setBtn" aria-label="설정">⚙︎</button>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1>주제만 던지면<br><em>8명의 AI 직원</em>이 일해요</h1>
+      <p>송이 팀장이 업무를 나누고, 각 팀이 실제로 문서·코드·전략을 만들어요.</p>
+    </div>
+  </section>
+
+  <div class="grid">
+    <div class="col stick">
+      <div class="card office-card">
+        <div class="office" id="office">
+          <div class="wall"></div>
+          <div class="win" style="left:5%"></div><div class="win" style="left:81%"></div>
+          <div class="sign"><img src="logo-192.png" alt="">MetaSonGi Office</div>
+          <div class="o shelf" style="left:30%;top:8.6%;--c:#7B8CFF"><i style="left:10%;height:110%;--c:#7B8CFF"></i><i style="left:26%;height:85%;--c:#FF8FB1"></i><i style="left:42%;height:120%;--c:#6CCB9F"></i><i style="left:64%;height:90%;--c:#FFC857"></i></div>
+          <div class="o coffee" style="left:70%;top:7.5%"></div>
+          <div class="rug"></div>
+          <div class="o mtable" style="left:50%;top:61%"><div class="cap"></div>
+            <div class="dot" style="left:18%;top:22%;width:18%;height:22%"></div><div class="dot" style="left:52%;top:12%;width:14%;height:17%"></div>
+            <div class="dot" style="left:70%;top:46%;width:16%;height:20%"></div><div class="dot" style="left:30%;top:58%;width:12%;height:15%"></div></div>
+          <div class="rl" style="left:50%;top:42.5%">🍄 회의실</div>
+          <div class="o plant" style="left:5%;top:60%"></div>
+          <div class="o plant" style="left:95%;top:60%"></div>
+          <div class="o plant" style="left:50%;top:95%"></div>
+          <div id="desks"></div>
+          <div id="agents"></div>
+        </div>
+        <div class="staff" id="staff"></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card order">
+        <h2>📮 오늘의 주제</h2>
+        <textarea id="brief" placeholder="예) 내 유튜브 채널 '메타송이' 구독자 1만 명 만들기 계획 세워 줘"></textarea>
+        <div class="ex" id="examples"></div>
+        <div class="row">
+          <button class="btn" id="go">팀에 맡기기</button>
+          <button class="btn ghost" id="stop" disabled>중단</button>
+        </div>
+        <div class="prog" id="prog">
+          <div class="track" id="track"></div>
+          <div class="stepname" id="stepname"></div>
+          <div class="plan" id="plan"></div>
+        </div>
+        <div class="hint" id="hint">직원을 누르면 한 명에게만 따로 일을 맡길 수도 있어요.</div>
+      </div>
+
+      <div class="card">
+        <div class="tabs" id="tabs"></div>
+        <div class="out-head">
+          <div class="who" id="who"></div>
+          <div class="row" style="gap:6px;flex-wrap:wrap" id="outBtns"></div>
+        </div>
+        <div class="doc-view" id="view"></div>
+      </div>
+
+      <div class="card">
+        <div class="sec-h">📒 업무 일지</div>
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+  </div>
+  <footer>© MetaSonGi · <a href="https://metasongi.github.io/" target="_blank" rel="noopener">성남 AI 랩</a> · <a href="https://github.com/MetaSonGi" target="_blank" rel="noopener">GitHub</a></footer>
+</div>
+
+<!-- task sheet -->
+<div class="sheet-bg" id="taskBg">
+  <div class="sheet">
+    <h3><span class="avatar" id="shAv"></span><span id="shTitle"></span></h3>
+    <div class="sub" id="shSub"></div>
+    <textarea id="shInput"></textarea>
+    <div class="row" style="margin-top:12px">
+      <button class="btn ghost" data-close>닫기</button>
+      <button class="btn" id="shGo">일 맡기기</button>
+    </div>
+  </div>
+</div>
+
+<!-- settings sheet -->
+<div class="sheet-bg" id="setBg">
+  <div class="sheet">
+    <h3>⚙︎ 설정</h3>
+    <div class="sub" id="setMode"></div>
+    <div id="apiBox">
+      <label for="apiKey">Anthropic API 키 (GitHub 사이트에서 AI를 쓸 때)</label>
+      <input id="apiKey" type="password" placeholder="sk-ant-..." autocomplete="off">
+      <div class="note">키는 이 기기의 브라우저에만 저장되고, Anthropic API로만 전송돼요. 공용 기기에서는 넣지 마세요. 사용량만큼 API 요금이 나와요.</div>
+      <label for="model">모델</label>
+      <input id="model" placeholder="claude-sonnet-5-5">
+    </div>
+    <label for="notionParent">노션 저장 위치 (선택)</label>
+    <input id="notionParent" placeholder="노션 페이지 링크 — 비우면 내 개인 페이지로 저장">
+    <div class="note">노션 저장은 Claude 앱 안에서 열었을 때 내 노션 연결로 동작해요.</div>
+    <div class="row" style="margin-top:16px">
+      <button class="btn ghost" id="clearAll">결과 지우기</button>
+      <button class="btn" id="saveSet">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- export sheet -->
+<div class="sheet-bg" id="expBg">
+  <div class="sheet">
+    <h3>📤 결과 내보내기</h3>
+    <div class="sub" id="expSub"></div>
+    <div class="row" style="flex-direction:column;gap:10px">
+      <button class="btn" id="expNotion">노션에 새 페이지로 저장</button>
+      <button class="btn ghost" id="expCopy" style="flex:1">전체 마크다운 복사</button>
+      <button class="btn ghost" id="expDl" style="flex:1">.md 파일 받기</button>
+      <a class="btn ghost" id="expOpen" style="flex:1;text-align:center;text-decoration:none;display:none" href="https://claude.ai/artifact/3XLf4Asm7rKzhezXUBBc4r" target="_blank" rel="noopener">Claude 앱에서 열기 (노션 저장용)</a>
+    </div>
+    <div class="note" id="expNote" style="margin-top:10px"></div>
+    <div class="row" style="margin-top:12px"><button class="btn ghost" data-close style="flex:1">닫기</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ team ============ */
+const W=480,H=460;
+const AGENTS=[
+ {id:'lead',name:'송이',role:'팀장',color:'#F0884A',hair:'#5A3524',skin:'#FBE0CC',desk:{x:62,y:150},mush:true,
+  persona:'당신은 MetaSonGi 회사의 팀장 "송이"입니다. 대표님의 주제를 이해하고 팀원에게 업무를 나누며, 결과를 모아 대표님께 보고합니다.'},
+ {id:'pm',name:'지수',role:'기획',color:'#7B8CFF',hair:'#3A2A20',skin:'#F6D7C0',desk:{x:180,y:150},
+  persona:'당신은 MetaSonGi 회사의 기획자 "지수"입니다. 목표·사용자·기능·일정을 구조적으로 정리해 실행 가능한 계획을 만듭니다.'},
+ {id:'research',name:'도윤',role:'리서치',color:'#4FB3D9',hair:'#26201C',skin:'#EFCBAD',desk:{x:300,y:150},
+  persona:'당신은 MetaSonGi 회사의 리서처 "도윤"입니다. 시장·경쟁사·고객을 조사하고 근거와 함께 인사이트를 정리합니다. 확실하지 않은 수치는 "추정" 또는 "확인 필요"로 표시합니다.'},
+ {id:'design',name:'하나',role:'디자인',color:'#FF8FB1',hair:'#7A3F1F',skin:'#F9DCC8',desk:{x:418,y:150},
+  persona:'당신은 MetaSonGi 회사의 디자이너 "하나"입니다. 브랜드 무드, 컬러, 타이포, 화면 레이아웃, 콘텐츠 비주얼을 구체적인 값으로 제안합니다.'},
+ {id:'dev',name:'민호',role:'개발',color:'#5CC98F',hair:'#1D1D1D',skin:'#EEC7A6',desk:{x:62,y:420},
+  persona:'당신은 MetaSonGi 회사의 개발자 "민호"입니다. 바로 실행되는 깔끔한 코드와 기술 설계를 만듭니다.'},
+ {id:'qa',name:'유진',role:'QA',color:'#A98BEA',hair:'#4A2A3A',skin:'#F6D5C2',desk:{x:180,y:420},
+  persona:'당신은 MetaSonGi 회사의 QA 담당 "유진"입니다. 앞선 결과물의 오류·빠진 점·위험을 찾아 체크리스트와 수정 제안을 냅니다.'},
+ {id:'marketing',name:'소희',role:'마케팅',color:'#F5B731',hair:'#3B2418',skin:'#FADFCB',desk:{x:300,y:420},
+  persona:'당신은 MetaSonGi 회사의 마케터 "소희"입니다. 콘텐츠·SNS·광고 카피와 채널별 홍보 계획을 실행 단위로 만듭니다.'},
+ {id:'sales',name:'태윤',role:'영업',color:'#E5604F',hair:'#2A1F3D',skin:'#F0CDB0',desk:{x:418,y:420},
+  persona:'당신은 MetaSonGi 회사의 영업 담당 "태윤"입니다. 타깃 고객, 가격, 제안 문구, 첫 고객 확보 방법을 현실적으로 제안합니다.'},
+];
+const WORKERS=AGENTS.filter(a=>a.id!=='lead');
+const CENTER={x:240,y:280};
+AGENTS.forEach((a,i)=>{const ang=-Math.PI/2+i*(Math.PI*2/AGENTS.length);a.seat={x:Math.round(CENTER.x+Math.cos(ang)*92),y:Math.round(CENTER.y+18+Math.sin(ang)*62)}});
+const EXAMPLES=['유튜브 채널 구독자 1만 명 만들기','AI 교육 원데이 클래스 런칭','동네 카페 단골 늘리기','스마트팩토리 교육 키트 판매'];
+const SPOTS=[{x:336,y:62,say:'커피 한 잔 ☕'},{x:144,y:62,say:'자료 찾는 중 📚'},{x:24,y:285,say:'화분 물 주기 🌱'},{x:456,y:285,say:'스트레칭~'},{x:240,y:438,say:'바람 쐬는 중'}];
+const IDLE_TALK=['오늘 할 일 정리 중','메일 확인 중','레퍼런스 보는 중','점심 뭐 먹지?','아이디어 메모 ✍️'];
+const ARTIFACT_URL='https://claude.ai/artifact/3XLf4Asm7rKzhezXUBBc4r';
+
+const $=s=>document.querySelector(s);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pct=(v,t)=>(v/t*100)+'%';
+const byId=id=>AGENTS.find(a=>a.id===id);
+const clip=(t,n)=>{t=String(t||'');return t.length>n?t.slice(0,n)+'\n…(이하 생략)':t};
+
+const S={running:false,stop:false,abort:null,brief:'',plan:null,items:[],report:'',direct:[],tab:'report',streaming:null,devView:{},sel:null,
+  set:{apiKey:'',model:'claude-sonnet-5-5',notionParent:''}};
+const ENV={mode:'demo',sample:null,mcp:null};
+
+/* ============ storage ============ */
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function save(){lsSet('msOffice',{brief:S.brief,plan:S.plan,items:S.items,report:S.report,direct:S.direct.slice(-10)})}
+function load(){const d=lsGet('msOffice',null);if(d){S.brief=d.brief||'';S.plan=d.plan||null;S.items=d.items||[];S.report=d.report||'';S.direct=d.direct||[];$('#brief').value=S.brief}
+  Object.assign(S.set,lsGet('msOfficeSet',{}))}
+
+/* ============ build ============ */
+function charSVG(a){
+  const hat=a.mush?`<path d="M3 11.5 Q4 -1 16 -1.5 Q28 -1 29 11.5 Q16 8.5 3 11.5Z" fill="#F0884A" stroke="#5A3524" stroke-width="1"/>
+   <ellipse cx="10" cy="4.5" rx="2.6" ry="1.8" fill="#FFF5E8"/><ellipse cx="18.5" cy="2.2" rx="2" ry="1.4" fill="#FFF5E8"/><ellipse cx="24" cy="7" rx="2" ry="1.6" fill="#FFF5E8"/>`
+   :`<path d="M6.5 13 Q6 2.5 16 2.5 Q26 2.5 25.5 13 Q23 7.5 16 8 Q9 7.6 6.5 13Z" fill="${a.hair}"/>`;
+  return `<svg viewBox="0 0 32 48"><g class="flip"><ellipse cx="16" cy="46" rx="9" ry="2.4" fill="rgba(90,50,20,.2)"/>
+  <rect class="legL" x="10.5" y="34" width="4.6" height="10.5" rx="2.3" fill="#5A4236"/>
+  <rect class="legR" x="16.9" y="34" width="4.6" height="10.5" rx="2.3" fill="#5A4236"/>
+  <g class="bodywrap"><rect x="7.5" y="22" width="17" height="15" rx="7" fill="${a.color}"/>
+  <path d="M12 22 Q16 26 20 22" stroke="rgba(255,255,255,.7)" stroke-width="1.3" fill="none"/>
+  <circle cx="16" cy="13" r="9.5" fill="${a.skin}" stroke="#5A3524" stroke-width=".8"/>
+  ${hat}
+  <circle cx="19.6" cy="14" r="1.25" fill="#2A1A12"/><circle cx="13" cy="14" r="1.25" fill="#2A1A12"/>
+  <ellipse cx="11" cy="17" rx="1.8" ry="1.1" fill="#FFB2A0" opacity=".7"/><ellipse cx="21.6" cy="17" rx="1.8" ry="1.1" fill="#FFB2A0" opacity=".7"/>
+  <path d="M14.6 17.4 Q16.3 18.7 18 17.4" stroke="#B0614A" stroke-width=".9" fill="none" stroke-linecap="round"/></g></g></svg>`;
+}
+function build(){
+  AGENTS.forEach(a=>{
+    const d=document.createElement('div');
+    d.className='o desk';d.style.cssText=`left:${pct(a.desk.x,W)};top:${pct(a.desk.y-30,H)};--c:${a.color}`;
+    d.innerHTML=`<div class="mon"><div class="scr"></div><div class="lines"><i></i><i></i><i></i></div></div><div class="top"></div><div class="mug"></div><div class="tag">${a.role}${a.id==='lead'?'':'팀'}</div>`;
+    $('#desks').appendChild(d);a.deskEl=d;
+    const el=document.createElement('div');
+    el.className='agent';el.style.setProperty('--c',a.color);
+    el.innerHTML=`<div class="bubble"></div><div class="zz">✎</div>${charSVG(a)}<div class="doc"></div><div class="nm">${a.name}</div>`;
+    $('#agents').appendChild(el);a.el=el;a.bub=el.querySelector('.bubble');
+    a.x=a.desk.x;a.y=a.desk.y;place(a,0);
+    el.onclick=()=>openTask(a);
+    const c=document.createElement('button');c.className='chip';c.style.setProperty('--c',a.color);
+    c.innerHTML=`<div class="n"><i></i>${a.name}</div><div class="r">${a.role}</div><div class="s">대기 중</div>`;
+    c.onclick=()=>openTask(a);$('#staff').appendChild(c);a.chipEl=c;a.chip=c.querySelector('.s');
+    a.busy=false;a.token=0;
+  });
+  $('#examples').innerHTML=EXAMPLES.map(e=>`<button>${e}</button>`).join('');
+  $('#examples').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('#brief').value=b.textContent;$('#brief').focus()});
+}
+function place(a,dur){a.el.style.transitionDuration=dur+'ms';a.el.style.left=pct(a.x,W);a.el.style.top=pct(a.y,H);a.el.style.zIndex=10+Math.round(a.y)}
+function walkTo(a,x,y){
+  const tk=++a.token,dx=x-a.x,dy=y-a.y,dist=Math.hypot(dx,dy);
+  if(dist<2)return Promise.resolve(true);
+  const dur=Math.max(250,dist/95*1000);
+  if(Math.abs(dx)>2)a.el.classList.toggle('left',dx<0);
+  a.el.classList.add('walking');a.x=x;a.y=y;place(a,dur);
+  return sleep(dur).then(()=>{if(tk===a.token)a.el.classList.remove('walking');return tk===a.token});
+}
+function say(a,t,ms=2600){a.bub.textContent=t;a.bub.classList.add('show');clearTimeout(a.bt);a.bt=setTimeout(()=>a.bub.classList.remove('show'),ms)}
+function status(a,s,busy){a.chip.textContent=s;a.chipEl.classList.toggle('busy',!!busy)}
+function face(a,x){a.el.classList.toggle('left',x<a.x)}
+
+function idleLoop(){
+  AGENTS.forEach(async a=>{
+    if(a.busy||a.wander||Math.random()>.22)return;
+    a.wander=true;
+    try{
+      if(Math.random()<.45){const sp=SPOTS[Math.floor(Math.random()*SPOTS.length)];
+        status(a,'잠깐 휴식');
+        if(await walkTo(a,sp.x+(Math.random()*20-10),sp.y+(Math.random()*10-5))&&!a.busy){say(a,sp.say);await sleep(2500+Math.random()*2500)}
+        if(!a.busy){await walkTo(a,a.desk.x,a.desk.y);if(!a.busy)status(a,'대기 중')}
+      }else say(a,IDLE_TALK[Math.floor(Math.random()*IDLE_TALK.length)],2200);
+    }finally{a.wander=false}
+  });
+}
+
+/* ============ ui helpers ============ */
+function log(html){const t=new Date().toTimeString().slice(0,5);const el=document.createElement('div');el.innerHTML=`<time>${t}</time>${html}`;$('#log').prepend(el)}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(e.t);e.t=setTimeout(()=>e.classList.remove('show'),2000)}
+function openSheet(id){$(id).classList.add('open')}
+function closeSheets(){document.querySelectorAll('.sheet-bg').forEach(s=>s.classList.remove('open'));AGENTS.forEach(a=>a.el.classList.remove('sel'))}
+document.querySelectorAll('.sheet-bg').forEach(bg=>{bg.addEventListener('click',e=>{if(e.target===bg||e.target.hasAttribute('data-close'))closeSheets()})});
+
+function renderProgress(curIdx,label){
+  const p=$('#prog');p.classList.add('on');
+  const steps=['계획',...(S.plan?S.plan.tasks.map(t=>byId(t.who).role):[]),'보고'];
+  $('#track').innerHTML=steps.map((s,i)=>`<div class="${i<curIdx?'done':i===curIdx?'cur':''}"></div>`).join('');
+  $('#stepname').textContent=label||'';
+  $('#plan').innerHTML=S.plan?S.plan.tasks.map((t,i)=>{const a=byId(t.who);const st=i+1<curIdx?'done':i+1===curIdx?'cur':'';return `<div class="t ${st}" style="--c:${a.color}"><b>${a.name}·${a.role}</b><span>${esc(t.task)}</span></div>`}).join(''):'';
+}
+
+/* ============ markdown ============ */
+function md(src){
+  const blocks=[];let s=String(src||'').replace(/```(\w*)\n?([\s\S]*?)(```|$)/g,(m,l,c)=>{blocks.push(`<pre><code>${esc(c.replace(/\n$/,''))}</code></pre>`);return `\u0000${blocks.length-1}\u0000`});
+  const inline=t=>esc(t).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  let out='',list=null,table=null;
+  const close=()=>{if(list){out+=`</${list}>`;list=null}if(table){out+='</table>';table=null}};
+  for(const raw of s.split('\n')){
+    const l=raw.trimEnd(),tl=l.trim();let m;
+    if(/^\u0000\d+\u0000$/.test(tl)){close();out+=tl;continue}
+    if(/^\|.*\|$/.test(tl)){if(/^\|[\s:\-|]+\|$/.test(tl))continue;if(list){out+=`</${list}>`;list=null}if(!table){out+='<table>';table=1}
+      out+='<tr>'+tl.slice(1,-1).split('|').map(c=>`<td>${inline(c.trim())}</td>`).join('')+'</tr>';continue}
+    if(table){out+='</table>';table=null}
+    if(m=l.match(/^(#{1,4})\s+(.*)/)){close();const n=Math.min(3,m[1].length);out+=`<h${n}>${inline(m[2])}</h${n}>`;continue}
+    if(m=l.match(/^\s*[-*•]\s+(.*)/)){if(list!=='ul'){close();out+='<ul>';list='ul'}out+=`<li>${inline(m[1])}</li>`;continue}
+    if(m=l.match(/^\s*\d+[.)]\s+(.*)/)){if(list!=='ol'){close();out+='<ol>';list='ol'}out+=`<li>${inline(m[1])}</li>`;continue}
+    if(m=l.match(/^>\s?(.*)/)){close();out+=`<blockquote>${inline(m[1])}</blockquote>`;continue}
+    if(!tl){close();continue}
+    if(/^-{3,}$/.test(tl)){close();out+='<hr style="border:0;border-top:1.5px dashed var(--line2)">';continue}
+    close();out+=`<p>${inline(l)}</p>`;
+  }
+  close();return out.replace(/\u0000(\d+)\u0000/g,(m,i)=>blocks[i]);
+}
+const extractHTML=t=>{const m=String(t).match(/```html\s*\n([\s\S]*?)(```|$)/i);return m&&/<\w/.test(m[1])?m[1]:null};
+const extractPalette=t=>{const m=String(t).match(/```json\s*\n([\s\S]*?)```/i);if(!m)return null;try{const j=JSON.parse(m[1]);return Array.isArray(j.palette)?j.palette:null}catch(e){return null}};
+
+/* ============ outputs ============ */
+function tabList(){
+  const L=[{key:'report',label:'최종 보고',agent:'lead',text:S.report}];
+  S.items.forEach((it,i)=>L.push({key:'i'+i,label:`${i+1}. ${byId(it.who).role}`,agent:it.who,text:it.text,task:it.task}));
+  S.direct.forEach((d,i)=>L.push({key:'d'+i,label:`✦ ${byId(d.who).name}`,agent:d.who,text:d.text,task:d.task}));
+  return L;
+}
+function renderOut(){
+  const L=tabList();if(!L.find(t=>t.key===S.tab))S.tab='report';
+  const t=L.find(x=>x.key===S.tab),a=byId(t.agent),txt=t.text||'',live=S.streaming===S.tab;
+  $('#tabs').innerHTML=L.map(x=>`<button data-k="${x.key}" class="${x.key===S.tab?'on':''}" style="--c:${byId(x.agent).color}"><i></i>${esc(x.label)}</button>`).join('');
+  $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.tab=b.dataset.k;renderOut()});
+  $('#who').innerHTML=`<b style="color:${a.color}">${a.role} ${a.name}</b>${t.task?' · '+esc(clip(t.task,60)):''}`;
+  const html=extractHTML(txt),dv=S.devView[S.tab]||'preview';
+  let btns='';
+  if(txt&&!live){
+    if(html)btns+=`<button class="mini ${dv==='preview'?'on':''}" data-v="preview">미리보기</button><button class="mini ${dv==='doc'?'on':''}" data-v="doc">문서</button>`;
+    btns+=`<button class="mini" id="copyOne">복사</button>`;
+  }
+  if((S.report||S.items.length||S.direct.length)&&!S.running)btns+=`<button class="mini notion" id="exportBtn">📤 저장·내보내기</button>`;
+  $('#outBtns').innerHTML=btns;
+  $('#outBtns').querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{S.devView[S.tab]=b.dataset.v;renderOut()});
+  const c1=$('#copyOne');if(c1)c1.onclick=()=>copy(html&&dv==='preview'?html:txt);
+  const ex=$('#exportBtn');if(ex)ex.onclick=openExport;
+  const v=$('#view');
+  if(!txt){v.innerHTML=`<div class="empty"><img src="logo-192.png" alt="">${live?'작업을 시작했어요…':'아직 결과물이 없어요.<br>주제를 맡기면 송이 팀장이 팀을 꾸려 일을 시작해요.'}</div>`;return}
+  if(html&&!live&&dv==='preview'){v.innerHTML='';const f=document.createElement('iframe');f.className='preview';f.setAttribute('sandbox','allow-scripts');f.srcdoc=html;v.appendChild(f);return}
+  const pal=extractPalette(txt);
+  const palHtml=pal?'<div class="pal">'+pal.map(c=>`<div class="sw"><div style="background:${esc(c.hex)}"></div><p><b>${esc(c.name||'')}</b><br>${esc(c.hex)}</p></div>`).join('')+'</div>':'';
+  v.innerHTML=palHtml+md(pal?txt.replace(/```json[\s\S]*?```/i,''):txt)+(live?'<span class="caret"></span>':'');
+  if(live)v.scrollTop=v.scrollHeight;
+}
+async function copy(t){
+  try{await navigator.clipboard.writeText(t);toast('복사했어요')}
+  catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('복사했어요')}catch(_){toast('복사 실패 — 길게 눌러 선택해 주세요')}ta.remove()}
+}
+
+/* ============ AI providers ============ */
+async function initEnv(){
+  if(window.claude&&typeof window.claude.use==='function'){
+    try{ENV.sample=await window.claude.use('sample')}catch(e){}
+    try{ENV.mcp=await window.claude.use('mcp')}catch(e){}
+  }
+  refreshMode();
+}
+function refreshMode(){
+  ENV.mode=ENV.sample?'claude':(S.set.apiKey?'api':'demo');
+  const m=$('#mode');m.className='pill '+(ENV.mode==='claude'?'live':ENV.mode==='api'?'api':'');
+  m.querySelector('span').textContent=ENV.mode==='claude'?'Claude 연결됨':ENV.mode==='api'?'API 키로 작동':'데모 모드';
+}
+async function ai(prompt,{onText,signal,tools,heavy}={}){
+  if(ENV.mode==='claude'){
+    const opts={modelTier:heavy?'complex':'default',signal,cache:false,onText:({text})=>onText&&onText(text)};
+    if(tools&&tools.length)opts.tools=tools;
+    const r=await ENV.sample(prompt,opts);return r.text;
+  }
+  if(ENV.mode==='api')return apiStream(prompt,{onText,signal,heavy});
+  throw {code:'demo'};
+}
+async function apiStream(prompt,{onText,signal,heavy}){
+  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal,
+    headers:{'content-type':'application/json','x-api-key':S.set.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:S.set.model||'claude-sonnet-5-5',max_tokens:heavy?8000:3000,stream:true,messages:[{role:'user',content:prompt}]})});
+  if(!res.ok){let msg='';try{msg=(await res.json()).error.message}catch(e){}throw {code:'api_'+res.status,message:msg||('HTTP '+res.status)}}
+  const rd=res.body.getReader(),dec=new TextDecoder();let buf='',text='';
+  while(true){const {done,value}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});
+    let i;while((i=buf.indexOf('\n'))>=0){const line=buf.slice(0,i).trim();buf=buf.slice(i+1);
+      if(!line.startsWith('data:'))continue;try{const j=JSON.parse(line.slice(5));
+        if(j.type==='content_block_delta'&&j.delta&&j.delta.text){text+=j.delta.text;onText&&onText(text)}
+        if(j.type==='error')throw {code:'api_error',message:j.error&&j.error.message}}catch(e){if(e.code)throw e}}}
+  return text;
+}
+/* Notion */
+function notionTools(a){
+  if(ENV.mode!=='claude'||!ENV.mcp)return [];
+  if(!['lead','pm','research','marketing','sales'].includes(a.id))return [];
+  return [{name:'notion_search',description:'대표님의 노션 워크스페이스에서 관련 페이지를 검색합니다. 대표님의 기존 자료·메모·계획이 도움이 될 때 사용하세요.',
+    inputSchema:{type:'object',properties:{query:{type:'string',description:'짧은 검색어'}},required:['query']},
+    execute:async({query})=>{
+      say(a,`노션 검색: ${clip(query,14)}`,2600);log(`<b>${a.name}</b> 노션에서 “${esc(query)}” 검색`);
+      try{const r=await ENV.mcp.callTool('Notion','notion-search',{query,page_size:5,max_highlight_length:300});
+        return clip(JSON.stringify(r.payload??r.content),3500)}
+      catch(e){throw new Error('노션 검색 실패: '+(e&&e.code||'오류'))}
+    }}];
+}
+function notionErr(e){
+  const c=e&&e.code;
+  return c==='needs_reauth'?'노션 연결이 만료됐어요. claude.ai 설정 → 커넥터에서 Notion을 다시 연결해 주세요.'
+   :c==='server_not_connected'||c==='selection_required'?'노션 커넥터가 연결돼 있지 않아요. claude.ai 설정 → 커넥터에서 Notion을 추가해 주세요.'
+   :c==='not_in_manifest'||c==='approval_required'?'노션 사용을 허용하지 않았어요. 다시 누르면 허용 창이 떠요.'
+   :c==='blocked_by_policy'?'조직 정책으로 노션 쓰기가 막혀 있어요.'
+   :c==='server_unavailable'||c==='upstream_error'?'노션 응답이 없었어요. 페이지가 만들어졌을 수도 있으니 노션을 먼저 확인해 주세요.'
+   :c==='tool_error'?'노션이 요청을 거절했어요: '+clip(e.message,120)
+   :'노션 저장 실패 ('+(c||'오류')+')';
+}
+
+/* ============ work ============ */
+const P=(a,body)=>`${a.persona}\n반드시 한국어로, 마크다운으로 답하세요. 인사말이나 군더더기 없이 바로 쓸 수 있는 결과물만 작성합니다. 확인되지 않은 수치·사실에는 "추정" 또는 "확인 필요"를 붙이세요.\n\n${body}`;
+async function work(a,prompt,{store,label,heavy}){
+  a.busy=true;
+  await walkTo(a,a.desk.x,a.desk.y);a.el.classList.remove('left');
+  a.deskEl.classList.add('on');a.el.classList.add('working');
+  status(a,label||'작업 중',true);say(a,'작업 시작!');
+  log(`<b>${a.name}</b>(${a.role}) — ${esc(label||'작업')} 시작`);
+  S.tab=store.key;S.streaming=store.key;store.set('');renderOut();
+  const onText=t=>{store.set(t);if(S.tab===store.key)renderOut()};
+  let text='';
+  try{
+    S.abort=new AbortController();
+    if(ENV.mode==='demo')text=await fakeStream(demoText(a,label),onText);
+    else text=await ai(prompt,{onText,signal:S.abort.signal,tools:notionTools(a),heavy});
+  }catch(e){
+    S.streaming=null;a.deskEl.classList.remove('on');a.el.classList.remove('working');
+    const msg=(S.stop||(e&&(e.name==='AbortError'||e.code==='cancelled')))?'중단됨'
+      :e&&e.code==='rate_limited'?'요청이 많아 잠시 쉬어야 해요'
+      :e&&e.code==='not_granted'?'AI 사용을 허용하지 않았어요'
+      :e&&e.code==='api_401'?'API 키가 올바르지 않아요'
+      :(e&&e.message)||'오류가 났어요';
+    say(a,'⚠ '+clip(msg,18),4000);status(a,'중단됨');log(`<b>${a.name}</b> 작업 실패: ${esc(msg)}`);
+    if(e&&e.text)store.set(e.text);a.busy=false;renderOut();save();throw e;
+  }
+  store.set(text);S.streaming=null;
+  a.deskEl.classList.remove('on');a.el.classList.remove('working');
+  say(a,'완료! ✅');status(a,'완료');log(`<b>${a.name}</b> — ${esc(label||'작업')} 완료`);
+  renderOut();save();return text;
+}
+async function fakeStream(full,cb){let step=Math.max(4,Math.ceil(full.length/120));for(let i=0;i<full.length;i+=step){if(S.stop)throw {name:'AbortError'};cb(full.slice(0,i+step));await sleep(30)}return full}
+async function handoff(from,to,what){
+  if(from===to)return;
+  from.el.classList.add('carry');status(from,`${to.name}에게 전달`,true);
+  await walkTo(from,to.desk.x+(from.desk.x<=to.desk.x?-30:30),to.desk.y+6);
+  face(from,to.x);say(from,`${what} 공유해요 📄`);await sleep(1200);
+  say(to,'받았어요! 👍');from.el.classList.remove('carry');
+  log(`<b>${from.name}</b> → <b>${to.name}</b> ${esc(what)} 전달`);await sleep(700);
+  walkTo(from,from.desk.x,from.desk.y).then(()=>{if(!from.busy||S.running)status(from,'대기 중')});
+}
+async function gather(who,lines){
+  await Promise.all(who.map(a=>{a.busy=true;status(a,'회의 중',true);return walkTo(a,a.seat.x,a.seat.y)}));
+  who.forEach(a=>a.el.classList.toggle('left',a.seat.x>CENTER.x));
+  for(const [id,t] of lines){if(S.stop)throw {name:'AbortError'};say(byId(id),t,2300);await sleep(1400)}
+}
+function parsePlan(text){
+  const m=String(text).match(/\{[\s\S]*\}/);if(!m)return null;
+  try{const j=JSON.parse(m[0]);const ids=WORKERS.map(a=>a.id);
+    j.tasks=(j.tasks||[]).filter(t=>t&&ids.includes(t.who)&&t.task).slice(0,6);
+    return j.tasks.length?j:null}catch(e){return null}
+}
+const roster=()=>WORKERS.map(a=>`- ${a.id}: ${a.name} (${a.role}) — ${a.persona.split('. ').slice(1).join('. ')}`).join('\n');
+
+async function runProject(){
+  const brief=$('#brief').value.trim();
+  if(!brief){toast('주제를 적어 주세요');$('#brief').focus();return}
+  S.brief=brief;S.running=true;S.stop=false;S.plan=null;S.items=[];S.report='';S.tab='report';renderOut();
+  $('#go').disabled=true;$('#stop').disabled=false;$('#hint').style.display='none';
+  const lead=byId('lead');
+  log(`<b>대표</b> 새 주제: “${esc(clip(brief,60))}”`);
+  try{
+    /* 1. plan */
+    renderProgress(0,'송이 팀장이 누구에게 무엇을 맡길지 정하는 중');
+    const planStore={key:'report',set:t=>{S.report=t}};
+    const planText=await work(lead,`${lead.persona}\n\n대표님의 주제:\n"""${brief}"""\n\n팀원 목록:\n${roster()}\n\n이 주제에 꼭 필요한 팀원만 골라 3~6개의 업무를 순서대로 배정하세요. 뒤 업무는 앞 업무 결과를 참고할 수 있습니다. 코드나 화면이 필요할 때만 dev를, dev 결과 검토가 필요할 때 qa를 넣으세요. 같은 사람에게 두 번 맡겨도 됩니다.\n반드시 아래 JSON만 출력하세요(설명 금지):\n{"title":"짧은 프로젝트명","goal":"한 줄 목표","tasks":[{"who":"research","task":"구체적인 업무 지시 (산출물 형태 포함)"}]}`,{store:planStore,label:'업무 배정'});
+    let plan=parsePlan(planText);
+    if(!plan){plan={title:clip(brief,24),goal:brief,tasks:[{who:'research',task:'주제 관련 시장·타깃 조사'},{who:'pm',task:'실행 계획서 작성'},{who:'marketing',task:'홍보 콘텐츠 계획'}]};log('<b>송이</b> 계획 형식이 어긋나 기본 배정으로 진행')}
+    S.plan=plan;S.report='';renderOut();save();
+    const team=[lead,...new Set(plan.tasks.map(t=>byId(t.who)))];
+    renderProgress(0,'킥오프 회의 중');
+    await gather(team,[['lead',`“${clip(plan.title,14)}” 시작할게요!`],...plan.tasks.slice(0,4).map(t=>['lead',`${byId(t.who).name}님, ${clip(t.task,13)} 부탁해요`]),...[...new Set(plan.tasks.map(t=>t.who))].slice(0,3).map(id=>[id,'네, 맡겨 주세요!'])]);
+    team.forEach(a=>{walkTo(a,a.desk.x,a.desk.y).then(()=>status(a,a===lead?'진행 관리':'차례 대기',a!==lead))});
+    log(`<b>송이</b> 업무 배정 — ${plan.tasks.map(t=>byId(t.who).name).join(' → ')}`);
+
+    /* 2. tasks */
+    let prev=lead;
+    for(let i=0;i<plan.tasks.length;i++){
+      if(S.stop)throw {name:'AbortError'};
+      const t=plan.tasks[i],a=byId(t.who);
+      await handoff(prev,a,i===0?'업무 지시서':'이전 결과');
+      renderProgress(i+1,`${a.role} ${a.name}: ${t.task}`);
+      S.items.push({who:t.who,task:t.task,text:''});const idx=S.items.length-1;
+      const ctx=S.items.slice(0,idx).map((it,j)=>`[${j+1}. ${byId(it.who).role} ${byId(it.who).name} — ${it.task}]\n${clip(it.text,it.who==='dev'?3500:1800)}`).join('\n\n');
+      const devRule=t.who==='dev'?'\n\n화면이나 도구를 만든다면 외부 리소스(폰트·이미지·CDN) 없이 CSS·JS를 인라인한 단일 HTML 파일 하나로 작성하고, 모바일 우선, 한국어 문구, 300줄 이내로 하세요. 먼저 "## 구현 내용" 3줄 이내, 그다음 ```html 코드블록.':'';
+      const desRule=t.who==='design'?'\n\n색을 제안한다면 마지막에 ```json {"palette":[{"name":"Primary","hex":"#000000"}]} ``` 형식의 코드블록을 넣으세요.':'';
+      const toolRule=notionTools(a).length?'\n\n대표님의 노션에 관련 자료가 있을 수 있으면 notion_search 도구로 먼저 찾아보고, 찾은 내용을 근거로 쓰세요(최대 2번).':'';
+      await work(a,P(a,`프로젝트: ${plan.title}\n목표: ${plan.goal||brief}\n대표님 원래 주제: """${brief}"""\n\n${ctx?'앞선 팀원 결과물:\n'+ctx+'\n\n':''}당신의 업무:\n${t.task}\n\n분량은 핵심 위주로 700~1200자.${devRule}${desRule}${toolRule}`),
+        {store:{key:'i'+idx,set:x=>{S.items[idx].text=x}},label:clip(t.task,22),heavy:t.who==='dev'});
+      prev=a;
+    }
+
+    /* 3. report */
+    await handoff(prev,lead,'최종 결과');
+    renderProgress(plan.tasks.length+1,'모두 모여 대표님께 보고 준비');
+    await gather(team,[['lead','다들 수고했어요!'],...team.filter(a=>a!==lead).slice(0,3).map(a=>[a.id,'제 파트 끝났어요 🙌'])]);
+    team.forEach(a=>{if(a!==lead)walkTo(a,a.desk.x,a.desk.y).then(()=>status(a,'완료'))});
+    const all=S.items.map((it,j)=>`[${j+1}. ${byId(it.who).role} ${byId(it.who).name} — ${it.task}]\n${clip(it.text.replace(/```html[\s\S]*?(```|$)/i,'(HTML 시안 코드 — 별도 탭)'),1400)}`).join('\n\n');
+    await work(lead,P(lead,`대표님의 주제: """${brief}"""\n프로젝트: ${plan.title}\n\n팀원 결과물:\n${all}\n\n대표님께 드릴 최종 보고서를 쓰세요. 항목: ## 결론 (3줄) / ## 팀별 결과 요약 (표: 담당 | 결과물 | 핵심 내용) / ## 대표님이 결정해 주실 것 (2~3개) / ## 다음 할 일 (담당자 이름 포함, 체크리스트). 700자 내외.`),
+      {store:{key:'report',set:x=>{S.report=x}},label:'최종 보고서'});
+    renderProgress(plan.tasks.length+2,'완료! 📤 저장·내보내기로 노션에 남겨 두세요.');
+    team.forEach((a,i)=>setTimeout(()=>say(a,['보고 완료 🎉','수고했어요!','👏','다음 일 주세요!'][i%4],3000),i*200));
+    log('<b>프로젝트 완료</b> — 결과물 '+(S.items.length+1)+'개');
+  }catch(e){
+    if(!(e&&e.code==='demo'))renderProgress(-1,'작업이 중단됐어요. 다시 맡길 수 있어요.');
+  }finally{
+    S.running=false;S.abort=null;$('#go').disabled=false;$('#stop').disabled=true;save();
+    AGENTS.forEach(a=>{a.busy=false;a.el.classList.remove('carry','working');a.deskEl.classList.remove('on');walkTo(a,a.desk.x,a.desk.y).then(()=>{if(!a.busy)status(a,'대기 중')})});
+    renderOut();
+  }
+}
+
+/* direct task */
+function openTask(a){
+  S.sel=a;AGENTS.forEach(x=>x.el.classList.toggle('sel',x===a));
+  $('#shAv').style.setProperty('--c',a.color);$('#shAv').textContent=a.name[0];
+  $('#shTitle').textContent=`${a.role} ${a.name}`;
+  $('#shSub').textContent=a.busy||S.running?'지금 프로젝트 진행 중이에요. 끝나면 따로 맡길 수 있어요.':'이 직원에게만 바로 일을 맡겨요. 지금까지 결과물을 참고합니다.';
+  $('#shInput').placeholder={lead:'예) 이번 주 우선순위 정리해 줘',pm:'예) 서비스 기능 명세서 써 줘',research:'예) 경쟁 채널 5곳 비교표 만들어 줘',design:'예) 썸네일 디자인 가이드 3안',dev:'예) 신청 폼 화면 HTML로 만들어 줘',qa:'예) 이 기획서 빠진 점 점검해 줘',marketing:'예) 인스타 카드뉴스 5장 구성안',sales:'예) 기업 교육 제안 메일 써 줘'}[a.id];
+  $('#shGo').disabled=a.busy||S.running;
+  openSheet('#taskBg');say(a,'네, 대표님!',1500);
+}
+async function directTask(){
+  const a=S.sel,task=$('#shInput').value.trim();
+  if(!a||!task){toast('맡길 일을 적어 주세요');return}
+  closeSheets();$('#shInput').value='';S.stop=false;$('#stop').disabled=false;
+  log(`<b>대표</b> → <b>${a.name}</b> 개별 지시: “${esc(clip(task,50))}”`);
+  const ctx=[S.brief&&`최근 주제: "${S.brief}"`,S.report&&`최종 보고서:\n${clip(S.report,1500)}`].filter(Boolean).join('\n\n');
+  S.direct.push({who:a.id,task,text:''});const idx=S.direct.length-1;
+  const extra=a.id==='dev'?'\n코드가 필요하면 외부 리소스 없는 단일 HTML을 ```html 코드블록으로 주세요.':'';
+  try{await work(a,P(a,`${ctx?ctx+'\n\n':''}대표님의 지시:\n"""${task}"""${extra}`),{store:{key:'d'+idx,set:x=>{S.direct[idx].text=x}},label:clip(task,20),heavy:a.id==='dev'})}catch(e){}
+  finally{a.busy=false;$('#stop').disabled=!S.running;setTimeout(()=>{if(!a.busy)status(a,'대기 중')},2500)}
+}
+
+/* ============ export ============ */
+function fullMarkdown(){
+  const d=new Date().toISOString().slice(0,10);
+  let s=`> 대표 주제: ${S.brief||'(개별 지시)'}\n> 작성: MetaSonGi AI 오피스 · ${d}\n\n`;
+  if(S.report)s+=`# 최종 보고 — 팀장 송이\n\n${S.report}\n\n---\n\n`;
+  S.items.forEach((it,i)=>{const a=byId(it.who);s+=`# ${i+1}. ${a.role} ${a.name} — ${it.task}\n\n${clip(it.text,14000)}\n\n---\n\n`});
+  S.direct.forEach(dd=>{const a=byId(dd.who);s+=`# 개별 지시 · ${a.role} ${a.name} — ${dd.task}\n\n${clip(dd.text,8000)}\n\n---\n\n`});
+  return s;
+}
+function docTitle(){return `[AI 오피스] ${(S.plan&&S.plan.title)||clip(S.brief||'개별 지시',30)} — ${new Date().toISOString().slice(0,10)}`}
+function openExport(){
+  const claude=ENV.mode==='claude'&&ENV.mcp;
+  $('#expNotion').style.display=claude?'':'none';
+  $('#expOpen').style.display=claude?'none':'';
+  $('#expSub').textContent=claude?'최종 보고와 팀원 결과물을 노션 페이지 하나로 정리해요.':'GitHub 사이트에서는 노션에 바로 저장할 수 없어요. 마크다운을 복사해 노션에 붙여 넣거나, Claude 앱에서 열어 저장하세요.';
+  $('#expNote').textContent='';openSheet('#expBg');
+}
+async function saveNotion(){
+  const btn=$('#expNotion');btn.disabled=true;btn.textContent='노션에 저장 중…';$('#expNote').textContent='';
+  const parentId=(String(S.set.notionParent||'').replace(/-/g,'').match(/[0-9a-f]{32}/i)||[])[0];
+  const input={pages:[{properties:{title:docTitle()},content:fullMarkdown(),icon:'🍄'}],allow_async:false};
+  if(parentId)input.parent={type:'page_id',page_id:parentId};else input.creation_mode='draft';
+  try{
+    const r=await ENV.mcp.callTool('Notion','notion-create-pages',input);
+    const url=(JSON.stringify(r.payload??r).match(/https:\/\/(?:www\.)?notion\.so\/[^\s"'\\)]+/)||[])[0];
+    $('#expNote').innerHTML=url?`✅ 저장했어요 → <a href="${esc(url)}" target="_blank" rel="noopener">노션에서 열기</a>`:'✅ 저장했어요. 노션에서 확인해 보세요.';
+    log(`<b>노션</b> “${esc(docTitle())}” 저장`);toast('노션에 저장했어요');
+  }catch(e){$('#expNote').textContent='⚠ '+notionErr(e)}
+  finally{btn.disabled=false;btn.textContent='노션에 새 페이지로 저장'}
+}
+function downloadMd(){
+  try{const b=new Blob([fullMarkdown()],{type:'text/markdown'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=docTitle().replace(/[\\/:*?"<>|]/g,'_')+'.md';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+  catch(e){toast('다운로드가 막혀 있어요 — 복사를 써 주세요')}
+}
+
+/* demo text */
+function demoText(a,label){
+  const b=S.brief||'주제';
+  if(a.id==='lead'&&label==='업무 배정')return JSON.stringify({title:clip(b,20),goal:b,tasks:[{who:'research',task:'타깃과 경쟁 사례 조사'},{who:'pm',task:'4주 실행 계획서'},{who:'design',task:'브랜드 톤과 컬러 제안'},{who:'dev',task:'소개 랜딩 화면 시안'},{who:'marketing',task:'SNS 홍보 콘텐츠 계획'}]});
+  if(a.id==='dev')return `## 구현 내용\n데모 랜딩 화면입니다. 버튼을 누르면 신청 완료가 표시돼요.\n\n\`\`\`html\n<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font-family:sans-serif;background:#FFF7EC;color:#4A2E22}.h{padding:48px 22px;text-align:center}h1{font-size:26px}button{background:#F0884A;color:#fff;border:0;border-radius:14px;padding:14px 22px;font-size:16px}.c{background:#fff;border-radius:16px;padding:16px;margin:10px 18px}</style></head><body><div class="h"><h1>${esc(clip(b,30))}</h1><p>지금 시작해 보세요</p><button onclick="this.textContent='신청 완료! 🎉'">신청하기</button></div><div class="c">✔ 쉽고 빠르게</div><div class="c">✔ 믿을 수 있게</div></body></html>\n\`\`\``;
+  if(a.id==='design')return `## 디자인 컨셉\n따뜻함 · 친근함 · 신뢰\n\n## 레이아웃\n1. 히어로\n2. 장점 3가지\n3. 신청\n\n\`\`\`json\n{"palette":[{"name":"Primary","hex":"#F0884A"},{"name":"Brown","hex":"#4A2E22"},{"name":"Cream","hex":"#FFF7EC"},{"name":"Mint","hex":"#6CCB9F"},{"name":"Yellow","hex":"#FFC857"}]}\n\`\`\``;
+  return `## ${a.role} 결과 (데모)\n- 주제: ${b}\n- 업무: ${label}\n\n> 데모 모드예요. Claude 앱에서 열거나 설정에 API 키를 넣으면 실제 AI가 작성해요.\n\n| 항목 | 내용 |\n|---|---|\n| 우선순위 | 높음 |\n| 기간 | 1주 |`;
+}
+
+/* ============ settings ============ */
+function openSettings(){
+  $('#apiKey').value=S.set.apiKey||'';$('#model').value=S.set.model||'claude-sonnet-5-5';$('#notionParent').value=S.set.notionParent||'';
+  $('#apiBox').style.display=ENV.mode==='claude'?'none':'';
+  $('#setMode').textContent=ENV.mode==='claude'?'지금 Claude 앱 안에서 열려 있어요. AI와 노션이 내 계정으로 바로 동작해요.':'지금 GitHub 사이트에서 열려 있어요. API 키를 넣으면 실제 AI가 일하고, 없으면 데모로 움직여요.';
+  openSheet('#setBg');
+}
+$('#saveSet').onclick=()=>{S.set.apiKey=$('#apiKey').value.trim();S.set.model=$('#model').value.trim()||'claude-sonnet-5-5';S.set.notionParent=$('#notionParent').value.trim();lsSet('msOfficeSet',S.set);refreshMode();closeSheets();toast('저장했어요')};
+$('#clearAll').onclick=()=>{if(S.running)return;S.plan=null;S.items=[];S.report='';S.direct=[];save();$('#prog').classList.remove('on');renderOut();closeSheets();toast('결과를 지웠어요')};
+
+/* ============ init ============ */
+build();load();renderOut();
+if(S.plan&&S.items.length){$('#prog').classList.add('on');renderProgress(S.plan.tasks.length+2,'지난 프로젝트 결과예요.')}
+$('#go').onclick=runProject;
+$('#stop').onclick=()=>{S.stop=true;if(S.abort)try{S.abort.abort()}catch(e){};toast('중단할게요')};
+$('#shGo').onclick=directTask;
+$('#setBtn').onclick=openSettings;
+$('#expNotion').onclick=saveNotion;
+$('#expCopy').onclick=()=>copy(fullMarkdown());
+$('#expDl').onclick=downloadMd;
+setInterval(idleLoop,3600);
+setTimeout(()=>AGENTS.forEach((a,i)=>setTimeout(()=>say(a,['좋은 아침! 🍄','출근 완료 ☕','오늘도 화이팅','자료 정리 중','코드 켜는 중','버그 잡자!','콘텐츠 준비!','영업 나가요~'][i]),i*280)),500);
+log('<b>MetaSonGi AI 오피스</b> 오픈 — 직원 8명 출근');
+initEnv();
+</script>
+</body>
+</html>
