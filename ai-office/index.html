@@ -192,6 +192,24 @@ a{color:var(--orange2)}
 iframe.preview{width:100%;height:60vh;border:1.5px solid var(--line);border-radius:14px;background:#fff}
 .tool{display:inline-block;font-size:12px;background:#fff;border:1.5px solid var(--line);border-radius:99px;padding:2px 9px;margin:2px 0;color:var(--brown2)}
 
+.seg{display:flex;background:var(--cream);border:1.5px solid var(--line);border-radius:15px;padding:4px;gap:4px;margin-bottom:12px}
+.seg button{flex:1;border:0;background:none;border-radius:11px;padding:10px 6px;font-weight:700;font-size:13.5px;color:var(--brown2)}
+.seg button.on{background:#fff;color:var(--orange2);box-shadow:0 3px 8px -3px rgba(120,70,30,.35)}
+.sim{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.sim .head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sim .big{font-family:var(--disp);font-size:34px;line-height:1;color:var(--orange2)}
+.sim .cap{font-size:12px;color:var(--muted);font-weight:700}
+.sim .dots{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;margin:12px 0}
+.sim .dots i{aspect-ratio:1;border-radius:50%;background:var(--cream2);transition:transform .25s, background .25s}
+.sim .dots i.y{background:var(--mint);transform:scale(1.08)}.sim .dots i.n{background:#F4B2A3}
+.sim .legend{display:flex;gap:12px;font-size:12px;color:var(--brown2);margin-bottom:10px}
+.sim .legend b{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+.bars{display:grid;gap:6px;font-size:12.5px;margin:6px 0 10px}
+.bar{display:grid;grid-template-columns:74px 1fr 40px;align-items:center;gap:8px}
+.bar>div{height:10px;border-radius:9px;background:var(--cream2);overflow:hidden}.bar>div>b{display:block;height:100%;background:var(--mint);border-radius:9px}
+.bar span{text-align:right;font-weight:700}
+.sim h4{font-family:var(--disp);font-weight:400;font-size:15px;margin:10px 0 4px}
+.sim .warn{font-size:11.5px;color:var(--muted);margin-top:8px}
 .log{max-height:210px;overflow:auto;font-size:12.5px;display:flex;flex-direction:column;gap:5px}
 .log div{color:var(--brown2)}.log b{color:var(--brown)}
 .log time{font-variant-numeric:tabular-nums;color:var(--muted);margin-right:7px;font-size:11.5px}
@@ -260,7 +278,8 @@ footer a{color:var(--brown2)}
 
     <div class="col">
       <div class="card order">
-        <h2>📮 오늘의 주제</h2>
+        <div class="seg" id="seg"><button data-m="project" class="on">🏢 프로젝트 맡기기</button><button data-m="validate">💡 사업 아이디어 검증</button></div>
+        <h2 id="orderTitle">📮 오늘의 주제</h2>
         <textarea id="brief" placeholder="예) 내 유튜브 채널 '메타송이' 구독자 1만 명 만들기 계획 세워 줘"></textarea>
         <div class="ex" id="examples"></div>
         <div class="row">
@@ -498,7 +517,7 @@ const extractPalette=t=>{const m=String(t).match(/```json\s*\n([\s\S]*?)```/i);i
 /* ============ outputs ============ */
 function tabList(){
   const L=[{key:'report',label:'최종 보고',agent:'lead',text:S.report}];
-  S.items.forEach((it,i)=>L.push({key:'i'+i,label:`${i+1}. ${byId(it.who).role}`,agent:it.who,text:it.text,task:it.task}));
+  S.items.forEach((it,i)=>L.push({key:'i'+i,label:`${i+1}. ${it.label||byId(it.who).role}`,agent:it.who,text:it.text,task:it.task,item:it}));
   S.direct.forEach((d,i)=>L.push({key:'d'+i,label:`✦ ${byId(d.who).name}`,agent:d.who,text:d.text,task:d.task}));
   return L;
 }
@@ -520,6 +539,11 @@ function renderOut(){
   const c1=$('#copyOne');if(c1)c1.onclick=()=>copy(html&&dv==='preview'?html:txt);
   const ex=$('#exportBtn');if(ex)ex.onclick=openExport;
   const v=$('#view');
+  if(t.item&&t.item.kind==='sim'){
+    const ppl=parseSim(t.item.raw||'');
+    v.innerHTML=simViz(ppl,live)+(live?'':md(txt));
+    if(live)v.scrollTop=0;return;
+  }
   if(!txt){v.innerHTML=`<div class="empty"><img src="logo-192.png" alt="">${live?'작업을 시작했어요…':'아직 결과물이 없어요.<br>주제를 맡기면 송이 팀장이 팀을 꾸려 일을 시작해요.'}</div>`;return}
   if(html&&!live&&dv==='preview'){v.innerHTML='';const f=document.createElement('iframe');f.className='preview';f.setAttribute('sandbox','allow-scripts');f.srcdoc=html;v.appendChild(f);return}
   const pal=extractPalette(txt);
@@ -760,8 +784,129 @@ function downloadMd(){
   catch(e){toast('다운로드가 막혀 있어요 — 복사를 써 주세요')}
 }
 
+/* ============ 사업 아이디어 검증 모드 ============ */
+const EXAMPLES_V=['AI 영상편집 월 구독 대행','직장인 대상 주말 AI 실습 클래스','동네 반찬 정기배송','중고 드론 렌탈 플랫폼'];
+function setMode(m){
+  if(S.running)return;S.mode=m;
+  $('#seg').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+  const v=m==='validate';
+  $('#orderTitle').textContent=v?'💡 검증할 사업 아이디어':'📮 오늘의 주제';
+  $('#brief').placeholder=v?'예) 1인 사장님 대상, 매달 쇼츠 8개를 AI로 편집해 주는 월 19만 원 구독 서비스':"예) 내 유튜브 채널 '메타송이' 구독자 1만 명 만들기 계획 세워 줘";
+  $('#go').textContent=v?'아이디어 검증하기':'팀에 맡기기';
+  $('#hint').textContent=v?'가상 이사회 → 시장 조사 → 가상 고객 100명 → CFO 수익 계산 → 출시 전략 → 팀장 판정 순서로 진행돼요.':'직원을 누르면 한 명에게만 따로 일을 맡길 수도 있어요.';
+  const ex=v?EXAMPLES_V:EXAMPLES;
+  $('#examples').innerHTML=ex.map(e=>`<button>${e}</button>`).join('');
+  $('#examples').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('#brief').value=b.textContent;$('#brief').focus()});
+}
+function parseSim(raw){
+  const out=[];String(raw||'').split('\n').forEach(l=>{l=l.trim().replace(/,$/,'');if(!l.startsWith('{')||!l.endsWith('}'))return;
+    try{const o=JSON.parse(l);if(typeof o.buy==='boolean')out.push(o)}catch(e){}});
+  return out.slice(0,100);
+}
+const won=n=>Math.round(n).toLocaleString('ko-KR')+'원';
+function simStats(p){
+  const buy=p.filter(x=>x.buy),rate=p.length?buy.length/p.length:0;
+  const pays=buy.map(x=>+x.pay||0).filter(x=>x>0).sort((a,b)=>a-b);
+  const med=pays.length?pays[Math.floor(pays.length/2)]:0,avg=pays.length?pays.reduce((a,b)=>a+b,0)/pays.length:0;
+  const grp=(key,order,labels)=>order.map(k=>{const g=p.filter(x=>key(x)===k);return {k:labels[k]||k,n:g.length,r:g.length?g.filter(x=>x.buy).length/g.length:0}}).filter(g=>g.n);
+  const inc=grp(x=>x.income,['low','mid','high'],{low:'소득 낮음',mid:'소득 중간',high:'소득 높음'});
+  const ageB=x=>{const a=+x.age||0;return a<30?'20대':a<40?'30대':a<50?'40대':'50대+'};
+  const age=grp(ageB,['20대','30대','40대','50대+'],{});
+  const top=(arr)=>{const m={};arr.forEach(x=>{const w=String(x.why||'').trim();if(w)m[w]=(m[w]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,4)};
+  return {n:p.length,buyN:buy.length,rate,med,avg,inc,age,yes:top(buy),no:top(p.filter(x=>!x.buy))};
+}
+function simViz(p,live){
+  const s=simStats(p);
+  const dots=Array.from({length:100},(_,i)=>{const x=p[i];return x?`<i class="${x.buy?'y':'n'}" title="${esc(`${x.name||''} · ${x.age||''}세 · ${x.job||''} — ${x.buy?'구매':'안 삼'}: ${x.why||''}`)}"></i>`:'<i></i>'}).join('');
+  const bars=g=>g.map(x=>`<div class="bar"><span style="text-align:left;font-weight:500">${esc(x.k)} <small style="color:var(--muted)">(${x.n})</small></span><div><b style="width:${Math.round(x.r*100)}%"></b></div><span>${Math.round(x.r*100)}%</span></div>`).join('');
+  return `<div class="sim"><div class="head"><div><div class="cap">${live?`가상 고객 만나는 중… ${s.n}/100명`:`가상 고객 ${s.n}명 시뮬레이션`}</div><div class="big">구매 의향 ${Math.round(s.rate*100)}%</div></div>
+  <div style="text-align:right"><div class="cap">구매자 지불 의향 (중앙값)</div><div class="big" style="font-size:24px">${s.med?won(s.med):'—'}</div></div></div>
+  <div class="dots">${dots}</div><div class="legend"><span><b style="background:var(--mint)"></b>산다 ${s.buyN}</span><span><b style="background:#F4B2A3"></b>안 산다 ${s.n-s.buyN}</span><span style="color:var(--muted)">점을 누르면 고객 정보</span></div>
+  ${s.n>=10?`<h4>소득별 구매율</h4><div class="bars">${bars(s.inc)}</div><h4>연령별 구매율</h4><div class="bars">${bars(s.age)}</div>`:''}
+  <div class="warn">⚠ AI가 만든 가상 고객이에요. 방향 확인용이고 실제 수요와 다를 수 있어요.</div></div>`;
+}
+function simMarkdown(p){
+  const s=simStats(p);if(!s.n)return '';
+  const list=a=>a.length?a.map(([w,c])=>`- ${w} (${c}명)`).join('\n'):'- (없음)';
+  return `## 가상 고객 시뮬레이션 요약\n- 응답 고객: ${s.n}명 · **구매 의향 ${Math.round(s.rate*100)}%** (${s.buyN}명)\n- 구매자 지불 의향: 중앙값 ${s.med?won(s.med):'—'} · 평균 ${s.avg?won(s.avg):'—'}\n\n| 구분 | 고객 수 | 구매율 |\n|---|---|---|\n${[...s.inc,...s.age].map(g=>`| ${g.k} | ${g.n} | ${Math.round(g.r*100)}% |`).join('\n')}\n\n### 사는 이유 TOP\n${list(s.yes)}\n\n### 안 사는 이유 TOP\n${list(s.no)}\n\n> AI가 만든 가상 고객 결과예요. 방향 확인용이에요.`;
+}
+const VP={
+  board:(a,idea)=>P(a,`대표님의 사업 아이디어:\n"""${idea}"""\n\n가상 이사회를 열어 냉정하게 평가하세요. 이사 3명은 실존 인물이 아니라 관점입니다.\n① 🍎 제품 완벽주의자 — 단순함, 사용자 경험, "이게 정말 필요한가"\n② 🔭 역발상 투자자 — 남들이 못 보는 기회, 독점 가능성, 10배 차별점\n③ 💰 오퍼 설계자 — 가격 대비 가치, 고객 획득 비용, 거절하기 힘든 제안\n각 이사마다: ### 이사 이름 / **점수 n/10** / 좋은 점 1줄 / 가장 날카로운 지적 2개 / "이걸 바꾸면 투자한다" 1줄.\n마지막에 ## 이사회 합의 (3줄). 칭찬으로 포장하지 말고 약점을 분명히 말하세요.`),
+  research:(a,idea,ctx)=>P(a,`사업 아이디어: """${idea}"""\n\n앞선 결과:\n${ctx}\n\n시장·고객·경쟁을 조사하세요. ## 핵심 타깃 고객 (누가, 어떤 문제) / ## 시장 규모 추정 (TAM·SAM·SOM, 계산식과 가정을 보이기) / ## 경쟁·대체재 (표: 이름 또는 유형 | 가격대 | 강점 | 약점 — 실제 회사명은 확실할 때만) / ## 차별화 기회 2개. 확인되지 않은 숫자에는 "추정"을 붙이세요. 800자 내외.`),
+  sim:(a,idea,ctx)=>`${a.persona}\n\n사업 아이디어: """${idea}"""\n\n참고 (앞선 조사):\n${ctx}\n\n이 상품·서비스를 처음 본 서로 다른 한국의 가상 고객 100명을 만들어 각자 살지 말지 판단하게 하세요.\n- 다양하게: 연령 20~60대, 직업 다양, 소득 low:mid:high 대략 3:5:2, 성향 다양(가성비, 얼리어답터, 의심 많음, 바쁨 등)\n- 현실적으로: 대부분의 신규 서비스처럼 안 사는 사람이 충분히 있어야 합니다. 억지로 긍정적으로 만들지 마세요.\n- 이름은 실존 인물이 아닌 두 글자 가명.\n출력 형식: JSON Lines — 한 줄에 JSON 객체 하나씩 정확히 100줄. 설명·코드블록·빈 줄 없이 JSON만.\n각 줄 키: {"i":번호,"name":"가명","age":나이숫자,"job":"직업","income":"low|mid|high","trait":"성향 한 단어","buy":true또는false,"pay":월 지불 의향 원(숫자, 안 사면 0),"why":"판단 이유 18자 이내"}`,
+  cfo:(a,idea,ctx)=>P(a,`사업 아이디어: """${idea}"""\n\n앞선 결과 (가상 고객 시뮬레이션 포함):\n${ctx}\n\nCFO 관점에서 숫자로 검토하세요. ## 가격 제안 (시뮬레이션 지불 의향 근거) / ## 단위 경제 (표: 항목 | 금액 | 가정 — 객단가, 원가, 고객 획득 비용(CAC), 공헌이익, 회수 기간) / ## 손익분기 고객 수 (계산식) / ## 3개월 예상 수익 (표: 보수·기본·낙관 — 고객 수, 매출, 비용, 이익) / ## 숫자로 본 가장 큰 위험 1개. 모든 숫자는 가정임을 밝히세요.`),
+  mkt:(a,idea,ctx)=>P(a,`사업 아이디어: """${idea}"""\n\n앞선 결과:\n${ctx}\n\n출시 전략을 세우세요. ## 포지셔닝 한 줄 / ## 출시 4주 계획 (표: 주차 | 채널 | 액션 | 목표 지표) / ## 첫 100명 확보 방법 3가지 (돈이 거의 안 드는 것부터) / ## 광고·SNS 카피 3개 (시뮬레이션의 "사는 이유"를 활용, 각 30자 이내). 700자 내외.`),
+  verdict:(a,idea,ctx)=>P(a,`사업 아이디어: """${idea}"""\n\n검증 팀 결과:\n${ctx}\n\n팀장으로서 최종 판정을 내리세요. ## 판정: GO / PIVOT / STOP 중 하나 + 한 줄 이유 / ## 검증 점수 (표: 항목 | 점수 | 근거 — 문제 크기 25, 지불 의향 25, 차별성 25, 실행 가능성 25, 합계 100) / ## 가장 큰 리스크 3개 / ## 7일 안에 돈 거의 안 들이고 해볼 검증 실험 3개 (각각 성공 기준 숫자 포함) / 마지막 줄에 "> AI 시뮬레이션은 방향 확인용이에요. 실제 고객 10명 인터뷰로 꼭 확인하세요." 600자 내외.`)
+};
+async function runValidate(){
+  const idea=$('#brief').value.trim();
+  if(!idea){toast('검증할 아이디어를 적어 주세요');$('#brief').focus();return}
+  S.brief=idea;S.running=true;S.stop=false;S.items=[];S.report='';S.tab='report';
+  S.plan={title:'아이디어 검증 — '+clip(idea,18).replace(/\n…\(이하 생략\)/,''),goal:idea,mode:'validate',tasks:[
+    {who:'lead',k:'board',label:'가상 이사회',task:'가상 이사회 — 세 가지 관점으로 냉정 평가'},
+    {who:'research',k:'research',label:'시장 조사',task:'타깃·시장 규모·경쟁 조사'},
+    {who:'qa',k:'sim',label:'가상 고객 100',task:'가상 고객 100명 구매 시뮬레이션'},
+    {who:'sales',k:'cfo',label:'CFO',task:'CFO 관점 — 가격·단위 경제·손익분기·3개월 수익'},
+    {who:'marketing',k:'mkt',label:'출시 전략',task:'출시 4주 계획과 첫 100명 확보'}]};
+  renderOut();$('#go').disabled=true;$('#stop').disabled=false;
+  const lead=byId('lead'),team=[lead,...S.plan.tasks.slice(1).map(t=>byId(t.who))];
+  log(`<b>대표</b> 아이디어 검증 요청: “${esc(clip(idea,60))}”`);
+  try{
+    renderProgress(0,'검증 팀이 회의실에 모이는 중');
+    await gather(team,[['lead','아이디어 검증 회의 시작!'],['research','시장부터 볼게요'],['qa','가상 고객 100명 모셔 올게요'],['sales','숫자는 제가 봅니다 💰'],['marketing','출시 전략 맡을게요']]);
+    team.forEach(a=>{if(a!==lead)walkTo(a,a.desk.x,a.desk.y).then(()=>status(a,'차례 대기',true))});
+    let prev=lead;
+    for(let i=0;i<S.plan.tasks.length;i++){
+      if(S.stop)throw {name:'AbortError'};
+      const t=S.plan.tasks[i],a=byId(t.who);
+      if(i>0)await handoff(prev,a,'검증 자료');
+      renderProgress(i+1,`${a.name}·${t.label}: ${t.task}`);
+      const it={who:t.who,task:t.task,label:t.label,text:'',kind:t.k==='sim'?'sim':undefined,raw:''};S.items.push(it);const idx=S.items.length-1;
+      const ctx=S.items.slice(0,idx).map(x=>`[${x.label}]\n${clip(x.text,1600)}`).join('\n\n')||'(없음)';
+      S.curKind=t.k;
+      await work(a,VP[t.k](a,idea,ctx),{store:{key:'i'+idx,set:x=>{if(it.kind==='sim'){it.raw=x;it.text=simMarkdown(parseSim(x))}else it.text=x}},label:t.label,heavy:t.k==='sim'});
+      if(it.kind==='sim'){const s=simStats(parseSim(it.raw));say(a,`구매 의향 ${Math.round(s.rate*100)}%!`,3000);log(`<b>${a.name}</b> 가상 고객 ${s.n}명 중 ${s.buyN}명 구매 의향`)}
+      prev=a;
+    }
+    await handoff(prev,lead,'검증 결과');
+    renderProgress(S.plan.tasks.length+1,'송이 팀장이 최종 판정 중');
+    const all=S.items.map(x=>`[${x.label}]\n${clip(x.text,1300)}`).join('\n\n');
+    S.curKind='verdict';
+    await work(lead,VP.verdict(lead,idea,all),{store:{key:'report',set:x=>{S.report=x}},label:'최종 판정'});
+    const verdict=(S.report.match(/판정\s*[:：]?\s*\**\s*(GO|PIVOT|STOP)/i)||[])[1];
+    renderProgress(S.plan.tasks.length+2,`판정 완료${verdict?' — '+verdict.toUpperCase():''}. 📤 저장·내보내기로 노션에 남겨 두세요.`);
+    say(lead,verdict?`판정: ${verdict.toUpperCase()}!`:'판정 완료!',3500);
+    log(`<b>검증 완료</b>${verdict?' — 판정 '+verdict.toUpperCase():''}`);
+  }catch(e){
+    renderProgress(-1,'검증이 중단됐어요. 다시 시작할 수 있어요.');
+  }finally{
+    S.running=false;S.abort=null;S.curKind=null;$('#go').disabled=false;$('#stop').disabled=true;save();
+    AGENTS.forEach(a=>{a.busy=false;a.el.classList.remove('carry','working');a.deskEl.classList.remove('on');walkTo(a,a.desk.x,a.desk.y).then(()=>{if(!a.busy)status(a,'대기 중')})});
+    renderOut();
+  }
+}
+function demoSim(idea){
+  let seed=0;for(const c of idea)seed=(seed*31+c.charCodeAt(0))>>>0;
+  const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+  const fam='김이박최정강조윤장임한오서신권황안송류전'.split(''),giv='민서지우하윤도현서연준호수아예린태윤시우유진채원지호다은'.match(/../g);
+  const jobs=['회사원','자영업자','대학생','프리랜서','간호사','교사','개발자','주부','공무원','마케터','디자이너','영업직'];
+  const traits=['가성비','얼리어답터','의심 많음','바쁨','신중함','트렌드','실용파'];
+  const yes=['시간이 아까워서','가격이 적당해서','바로 써보고 싶어서','지인 추천이면 OK','혼자 하기 귀찮아서'];
+  const no=['지금은 필요 없음','가격이 부담돼서','직접 하는 게 편함','믿을 만한지 몰라서','비슷한 걸 이미 씀'];
+  return Array.from({length:100},(_,i)=>{const inc=rnd()<.3?'low':rnd()<.72?'mid':'high';const p=inc==='high'?.55:inc==='mid'?.38:.2;const age=20+Math.floor(rnd()*42);const b=rnd()<p+(age<40?.08:-.05);
+    return JSON.stringify({i:i+1,name:fam[Math.floor(rnd()*fam.length)]+giv[Math.floor(rnd()*giv.length)],age,job:jobs[Math.floor(rnd()*jobs.length)],income:inc,trait:traits[Math.floor(rnd()*traits.length)],buy:b,pay:b?Math.round((5+rnd()*25))*1000:0,why:b?yes[Math.floor(rnd()*yes.length)]:no[Math.floor(rnd()*no.length)]})}).join('\n');
+}
+const DEMO_V={
+  board:()=>`### 🍎 제품 완벽주의자\n**점수 6/10**\n- 좋은 점: 고객이 겪는 귀찮음이 분명해요\n- 지적: 기능이 너무 많아 첫 경험이 복잡해요 / 핵심 1가지만 남겨야 해요\n- 이걸 바꾸면 투자: 첫 화면에서 30초 안에 결과를 보여 주세요\n\n### 🔭 역발상 투자자\n**점수 5/10**\n- 좋은 점: 작은 틈새부터 시작하는 건 좋아요\n- 지적: 따라 하기 쉬워요 / 쌓이는 데이터나 커뮤니티가 없어요\n- 이걸 바꾸면 투자: 고객 데이터가 쌓일수록 좋아지는 구조\n\n### 💰 오퍼 설계자\n**점수 7/10**\n- 좋은 점: 월 구독이라 매출이 예측 가능해요\n- 지적: 첫 달 위험을 고객이 다 져요 / 보장 장치가 없어요\n- 이걸 바꾸면 투자: "마음에 안 들면 환불" 보장\n\n## 이사회 합의\n- 문제는 진짜, 해법은 아직 평범\n- 핵심 1기능 + 환불 보장으로 시작\n- 데모 모드 결과예요`,
+  research:()=>`## 핵심 타깃\n- 혼자 운영하는 30~40대 사장님\n\n## 시장 규모 (추정)\n| 구분 | 계산 | 규모 |\n|---|---|---|\n| TAM | 소상공인 수 × 연 지출 | 추정 |\n| SOM | 첫해 도달 가능 | 고객 300명 |\n\n> 데모 모드 결과예요`,
+  cfo:()=>`## 가격 제안\n- 월 19,000원 (지불 의향 중앙값 근처, 가정)\n\n## 손익분기\n- 고정비 150만 원 ÷ 공헌이익 1.2만 원 ≈ **125명**\n\n> 데모 모드 결과예요`,
+  mkt:()=>`## 포지셔닝\n바쁜 사장님의 시간을 사 주는 서비스\n\n## 첫 100명\n1. 지역 커뮤니티 무료 체험 30명\n2. 지인 추천 할인\n3. 전후 비교 쇼츠\n\n> 데모 모드 결과예요`,
+  verdict:()=>`## 판정: PIVOT\n핵심 기능 하나로 좁히면 해볼 만해요.\n\n## 검증 점수\n| 항목 | 점수 |\n|---|---|\n| 문제 크기 | 18/25 |\n| 지불 의향 | 14/25 |\n| 차별성 | 10/25 |\n| 실행 가능성 | 20/25 |\n| **합계** | **62/100** |\n\n## 7일 실험\n1. 사전 신청 페이지 → 방문자의 5% 신청이면 통과\n\n> AI 시뮬레이션은 방향 확인용이에요. 실제 고객 10명 인터뷰로 꼭 확인하세요.`
+};
+
 /* demo text */
 function demoText(a,label){
+  if(S.curKind){if(S.curKind==='sim')return demoSim(S.brief);if(DEMO_V[S.curKind])return DEMO_V[S.curKind]();}
   const b=S.brief||'주제';
   if(a.id==='lead'&&label==='업무 배정')return JSON.stringify({title:clip(b,20),goal:b,tasks:[{who:'research',task:'타깃과 경쟁 사례 조사'},{who:'pm',task:'4주 실행 계획서'},{who:'design',task:'브랜드 톤과 컬러 제안'},{who:'dev',task:'소개 랜딩 화면 시안'},{who:'marketing',task:'SNS 홍보 콘텐츠 계획'}]});
   if(a.id==='dev')return `## 구현 내용\n데모 랜딩 화면입니다. 버튼을 누르면 신청 완료가 표시돼요.\n\n\`\`\`html\n<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font-family:sans-serif;background:#FFF7EC;color:#4A2E22}.h{padding:48px 22px;text-align:center}h1{font-size:26px}button{background:#F0884A;color:#fff;border:0;border-radius:14px;padding:14px 22px;font-size:16px}.c{background:#fff;border-radius:16px;padding:16px;margin:10px 18px}</style></head><body><div class="h"><h1>${esc(clip(b,30))}</h1><p>지금 시작해 보세요</p><button onclick="this.textContent='신청 완료! 🎉'">신청하기</button></div><div class="c">✔ 쉽고 빠르게</div><div class="c">✔ 믿을 수 있게</div></body></html>\n\`\`\``;
@@ -782,7 +927,9 @@ $('#clearAll').onclick=()=>{if(S.running)return;S.plan=null;S.items=[];S.report=
 /* ============ init ============ */
 build();load();renderOut();
 if(S.plan&&S.items.length){$('#prog').classList.add('on');renderProgress(S.plan.tasks.length+2,'지난 프로젝트 결과예요.')}
-$('#go').onclick=runProject;
+S.mode='project';
+$('#go').onclick=()=>S.mode==='validate'?runValidate():runProject();
+$('#seg').querySelectorAll('button').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
 $('#stop').onclick=()=>{S.stop=true;if(S.abort)try{S.abort.abort()}catch(e){};toast('중단할게요')};
 $('#shGo').onclick=directTask;
 $('#setBtn').onclick=openSettings;
