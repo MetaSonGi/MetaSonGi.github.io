@@ -12,14 +12,14 @@
     },
     {
       emoji: '🧠', title: '디지털트윈 AI 랩',
-      url: 'https://metasongi.github.io/digital-twin-ai-lab/',
+      url: 'https://metasongi.github.io/digital-twin-mini-sim/ai-lab/',
       desc: '3D 트윈 + AI 이상탐지 · 2025–2026 트렌드 분석 · 인기 AI 서비스(챗봇·리포트) 체험.',
       tags: ['AI', '디지털트윈', '분석'],
       hue: ['#3a1060', '#5b1a8a'],
     },
     {
       emoji: '📷', title: '카메라 3D 뷰어',
-      url: 'https://metasongi.github.io/camera-to-3d-viewer/',
+      url: 'https://metasongi.github.io/image-to-3d-viewer/camera/',
       desc: '스마트폰 카메라로 촬영하면 즉시 깊이 맵과 Three.js 3D 모델로 변환.',
       tags: ['3D', 'AI'],
       hue: ['#0b3d2e', '#0e5a40'],
@@ -103,7 +103,7 @@
     },
     {
       emoji: '🗜️', title: '이미지 압축기',
-      url: 'https://metasongi.github.io/image-compressor/',
+      url: 'https://metasongi.github.io/image-toolkit/compressor/',
       desc: '사진 용량 줄이기 — WebP/JPG/PNG 변환, 품질·크기 조절, 일괄 압축.',
       tags: ['생산성'],
       hue: ['#0e3a2a', '#1a5a3a'],
@@ -255,10 +255,22 @@
     {"emoji":"🎓","title":"AI 자격증 로드맵","url":"https://metasongi.github.io/ai-certification-roadmap/","desc":"AWS·Azure·Google 등 AI 자격증과 무료 교육 비교, 내 로드맵 추가와 학습 진행률 관리.","tags":["교육","AI"],"hue":["#0e3a2a","#1a5a3a"],"isNew":true},
     {"emoji":"⚖️","title":"공공·법률 워크벤치","url":"https://metasongi.github.io/korean-public-workbench/","desc":"법령·소송·개인정보 등 9개 분야 공식 자료 바로가기, 준비 체크리스트, 주민번호 자동 가림 문서 초안.","tags":["생산성","데이터"],"hue":["#3a2a0e","#5a401a"],"isNew":true},
     {"emoji":"📦","title":"오픈소스 아이디어 선반","url":"https://metasongi.github.io/oss-shelf/","desc":"다음에 만들 오픈소스 10개 — 기능·라이선스·별점 비교와 확인 체크, 개인 메모 내보내기.","tags":["생산성","AI"],"hue":["#2a3a0e","#40581a"],"isNew":true},
-    {"emoji":"🧰","title":"효기 도구 작업실","url":"https://metasongi.github.io/tool-catalog-workspace/","desc":"AI 도구 62개 검색·프로젝트별 적용 매핑·메모·작업 보드·JSON 백업 — 수집한 도구를 실행 계획으로.","tags":["AI","생산성"],"hue":["#0e1a3a","#1a2e5e"],"isNew":true},
+    {"emoji":"🧰","title":"도구 카탈로그 작업실","url":"https://metasongi.github.io/tool-catalog-workspace/","desc":"AI 도구 62개 검색·프로젝트별 적용 매핑·메모·작업 보드·JSON 백업 — 수집한 도구를 실행 계획으로.","tags":["AI","생산성"],"hue":["#0e1a3a","#1a2e5e"],"isNew":true},
     {"emoji":"🔌","title":"가상 논리회로 실험실","url":"https://metasongi.github.io/virtual-logic-labs/","desc":"3D 보드에서 논리 회로와 공압·유압 회로를 잇고 전원을 켜 보는 실험 11개 — 솔레노이드 밸브·실린더·센서·자동 채점, 로그인 없음 (Unity 6 WebGL).","tags":["교육","3D"],"hue":["#3a240e","#5a3a1a"],"isNew":true},
-    {"emoji":"⚡","title":"3D 논리회로 랩","url":"https://metasongi.github.io/circuit-lab-3d/","desc":"3D 브레드보드에 게이트를 놓고 전선을 이으면 빛 신호가 흐르는 논리회로 실험실 — 미션 8개, 진리표 자동 채점, 휴대폰 지원.","tags":["교육","3D"],"hue":["#06302a","#0e4a40"],"isNew":true},
+    {"emoji":"⚡","title":"3D 논리회로 랩","url":"https://metasongi.github.io/virtual-logic-labs/circuit-lab-3d/","desc":"3D 브레드보드에 게이트를 놓고 전선을 이으면 빛 신호가 흐르는 논리회로 실험실 — 미션 8개, 진리표 자동 채점, 휴대폰 지원.","tags":["교육","3D"],"hue":["#06302a","#0e4a40"],"isNew":true},
     {"emoji":"🍄","title":"MetaSonGi AI 오피스","url":"https://metasongi.github.io/ai-office/","desc":"주제만 던지면 송이 팀장과 AI 직원 8명(기획·리서치·디자인·개발·QA·마케팅·영업)이 회의하고 나눠서 실제 결과물을 만드는 가상 회사 — 노션 저장.","tags":["AI","생산성"],"hue":["#3a1e0e","#5a321a"],"isNew":true},
+    {"emoji": "🌌", "title": "Ten Different Worlds 포트폴리오", "url": "https://metasongi.github.io/metasongi-motion-portfolio/", "desc": "구조·3D 장면·조작 방식이 모두 다른 10가지 테마 포트폴리오 — 우주 비행, 캐릭터 여행, 개발자 OS 등 (Three.js, 빌드 없음).", "tags": ["아트", "3D"], "hue": ["#0a0a2e", "#1e1450"]},
+    {"emoji": "🕺", "title": "SON·AR 마커 AR", "url": "https://metasongi.github.io/ARWT/", "desc": "휴대폰 카메라로 마커를 비추면 마커마다 다른 캐릭터가 춤추는 브라우저 AR (Unity 6 WebGL + AR.js).", "tags": ["3D", "아트"], "hue": ["#2a0e3a", "#481a5a"]},
+    {"emoji": "🧪", "title": "MuJoCo 물리 실험실", "url": "https://metasongi.github.io/mujoco-physics-lab/", "desc": "MuJoCo 4.0 WASM으로 물리 실험 14개를 돌리고 해석해와 실시간 비교.", "tags": ["교육", "3D"], "hue": ["#0e2a3a", "#14485a"]},
+    {"emoji": "📡", "title": "OpenSignal 제조 데이터 모니터", "url": "https://metasongi.github.io/open-signal-monitor/", "desc": "설비 데이터 수집 + MES/POP 학습 앱, 드래그로 배치하는 공장 레이아웃, LOT 기반 AI 기준선 실습.", "tags": ["데이터", "디지털트윈"], "hue": ["#0e3a2a", "#185a40"]},
+    {"emoji": "🦾", "title": "Unity 로봇팔 데모", "url": "https://metasongi.github.io/unity-arm-robot/", "desc": "Unity WebGL로 빌드한 로봇팔 조작 데모 — 설치 없이 브라우저에서 실행.", "tags": ["디지털트윈", "3D"], "hue": ["#1a2a3a", "#2a405a"]},
+    {"emoji": "🤖", "title": "로봇 AI 랩", "url": "https://metasongi.github.io/robot-ai-lab/", "desc": "로봇 운반 시간 예측, AI 보정, 강화학습, 웹캠 미디어아트를 단계별로 실습.", "tags": ["AI", "교육"], "hue": ["#2a1a3a", "#40285a"]},
+    {"emoji": "🚴", "title": "라이드 트레이스", "url": "https://metasongi.github.io/ride-trace/", "desc": "GPX 라이딩 기록을 2D·3D 경로, 고도 그래프, 이동 애니메이션으로 시각화 (자전거 국토종주 기록).", "tags": ["데이터", "3D"], "hue": ["#0e2a1a", "#1a4a2a"]},
+    {"emoji": "🔌", "title": "ESP32 기초 강좌", "url": "https://metasongi.github.io/esp32-basic-course/", "desc": "Arduino IDE로 배우는 ESP32 입문 8차시 무료 강좌.", "tags": ["교육"], "hue": ["#0e2a3a", "#1a3a5a"]},
+    {"emoji": "⚡", "title": "전기기사 실기 문제은행", "url": "https://metasongi.github.io/electric-exam-quiz/", "desc": "회차별 20문제와 모범답안으로 연습하는 전기기사 실기 문제은행.", "tags": ["교육"], "hue": ["#3a2a0e", "#5a401a"]},
+    {"emoji": "🥽", "title": "Unity WebXR 데모", "url": "https://metasongi.github.io/unity-webxr-demo/", "desc": "VR 헤드셋·PC 브라우저에서 바로 여는 Unity WebXR 빌드.", "tags": ["3D"], "hue": ["#1a0e3a", "#2e1a5a"]},
+    {"emoji": "🏯", "title": "한양도성 3D 쇼룸", "url": "https://metasongi.github.io/nft-showroom/", "desc": "한양도성 성곽길을 걸으며 기록한 장면을 둘러보는 3D 전시 공간 (Unity WebGL).", "tags": ["아트", "3D"], "hue": ["#2a1a0e", "#4a2e1a"]},
+    {"emoji": "🪀", "title": "추억 놀이터", "url": "https://metasongi.github.io/chueok-noriteo/", "desc": "달고나·딱지치기·실뜨기·팽이치기·비석치기 — 시대별 우리 놀이 웹게임 모음.", "tags": ["게임"], "hue": ["#3a0e1a", "#5a1a2e"]}
   ];
 
   window.HUB_PROJECTS = PROJECTS;

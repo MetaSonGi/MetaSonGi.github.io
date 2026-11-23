@@ -181,3 +181,15 @@ footer p { margin: 6px 0; }
   .about-card { flex-direction: column; }
   .nav-links { gap: 14px; }
 }
+
+/* 10-theme portfolio links */
+.worlds { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+.world { display: flex; flex-direction: column; gap: 6px; padding: 18px; border: 1px solid var(--border); border-radius: 14px;
+  background: var(--panel); color: var(--text); text-decoration: none; transition: transform .2s, border-color .2s; }
+.world:hover, .world:focus-visible { transform: translateY(-3px); border-color: var(--accent); }
+.world-no { font: 700 12px/1 ui-monospace, monospace; color: var(--neon); letter-spacing: .08em; }
+.world strong { font-size: 17px; }
+.world span:not(.world-no) { color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+.world code { margin-top: auto; color: var(--violet); font-size: 12px; }
+.worlds-foot { margin-top: 22px; display: flex; gap: 10px; flex-wrap: wrap; }
+@media (prefers-reduced-motion: reduce) { .world { transition: none; } }
